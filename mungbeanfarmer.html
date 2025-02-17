@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mung Bean Farmer 2025: Superior Edition</title>
+    <title>Mung Bean Farming Simulator 2025: Superior Edition</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,6 +44,14 @@
             font-size: 16px;
             color: red;
             margin-top: 20px;
+        }
+        .flash {
+            animation: flashEffect 0.5s ease-in-out;
+        }
+        @keyframes flashEffect {
+            0% { background-color: red; }
+            50% { background-color: transparent; }
+            100% { background-color: red; }
         }
         .stats {
             margin-top: 20px;
@@ -88,52 +96,33 @@
     <div id="upgrades">
         <!-- Upgrades Section -->
         <div class="upgrade">
-            <button id="basicFertilizer">Basic Fertilizer: 50 Mung Beans</button>
-            <div class="upgrade-info">Increases your Mung Beans per Click by 1.</div>
+            <button id="fertilizerUpgrade">Buy Fertilizer (Cost: 50 Mung Beans)</button>
+            <div class="upgrade-info">Increases Mung Beans per Click by 1.</div>
         </div>
         <div class="upgrade">
-            <button id="autoHarvestUpgrade">Auto-Harvest Upgrade: 500 Mung Beans</button>
-            <div class="upgrade-info">Automatically harvests 5 Mung Beans per second.</div>
+            <button id="autoHarvestUpgrade">Buy Auto-Harvester (Cost: 500 Mung Beans)</button>
+            <div class="upgrade-info">Harvests 5 Mung Beans per second automatically.</div>
         </div>
         <div class="upgrade">
-            <button id="speedBoost">Speed Boost: 1000 Mung Beans</button>
-            <div class="upgrade-info">Increases your Mung Beans per Click by 5.</div>
+            <button id="speedBoost">Buy Speed Boost (Cost: 1000 Mung Beans)</button>
+            <div class="upgrade-info">Increases Mung Beans per Click by 5.</div>
         </div>
+        
         <div class="upgrade">
-            <button id="megaDrone">Mega Drone: 5000 Mung Beans</button>
-            <div class="upgrade-info">Harvests 50 Mung Beans per second.</div>
-        </div>
-        <div class="upgrade">
-            <button id="premiumAutoHarvest">Premium Auto-Harvest: 20000 Mung Beans</button>
-            <div class="upgrade-info">Automatically harvests 100 Mung Beans per second.</div>
-        </div>
-        <div class="upgrade">
-            <button id="waitressRepellent">Waitress Repellent: 5000 Mung Beans</button>
-            <div class="upgrade-info">Prevents waitresses from appearing for 30 seconds.</div>
-        </div>
-        <div class="upgrade">
-            <button id="superFertilizer">Super Fertilizer: 10000 Mung Beans</button>
-            <div class="upgrade-info">Increases Mung Beans per Click by 10.</div>
-        </div>
-        <div class="upgrade">
-            <button id="beanMultiplier">Bean Multiplier: 25000 Mung Beans</button>
-            <div class="upgrade-info">Multiply all Mung Beans per Click by 2.</div>
-        </div>
-        <div class="upgrade">
-            <button id="fastFarming">Fast Farming: 50000 Mung Beans</button>
-            <div class="upgrade-info">Double your Mung Beans per second rate.</div>
+            <button id="prestigeUpgrade">Prestige Reset</button>
+            <div class="upgrade-info">Prestige and reset your progress for a Mung Beans per Click (MPC) multiplier boost.</div>
         </div>
     </div>
 
     <div id="waitressEffect" class="waitress-alert" style="display:none;"></div>
 
     <div id="stats" class="stats">
-        <!-- Stats Section -->
         <p>Total Mung Beans Harvested: <span id="totalHarvested">0</span></p>
         <p>Waitresses Defeated: <span id="totalWaitressesDefeated">0</span></p>
         <p>Prestige Resets: <span id="prestigeResets">0</span></p>
         <p>Mungs Per Second (MPS): <span id="mps">0</span></p>
         <p>Mung Beans Per Click (MPC): <span id="mpc">1</span></p>
+        <p>Upgrades Purchased: <span id="upgradesPurchased">0</span></p>
     </div>
 
     <script>
@@ -143,19 +132,43 @@
         let totalMungBeansHarvested = 0;
         let totalWaitressesDefeated = 0;
         let prestigeCount = 0;
-        let waitresses = [];
+        let totalUpgradesPurchased = 0;
         let autoHarvesting = 0;
         let harvestingSpeed = 1;
         let fertilizer = 1;
 
-        // Waitress types
-        const waitressTypes = [
-            { name: "Slow Waitress", effect: "slow", duration: 5000 },
-            { name: "Stealer Waitress", effect: "steal", duration: 5000 },
-            { name: "Disruption Waitress", effect: "disrupt", duration: 3000 },
-        ];
+        // Load saved progress from localStorage
+        function loadGameState() {
+            const savedState = JSON.parse(localStorage.getItem("mungBeanFarmerState"));
+            if (savedState) {
+                mungBeans = savedState.mungBeans;
+                mps = savedState.mps;
+                mpc = savedState.mpc;
+                totalMungBeansHarvested = savedState.totalMungBeansHarvested;
+                totalWaitressesDefeated = savedState.totalWaitressesDefeated;
+                prestigeCount = savedState.prestigeCount;
+                totalUpgradesPurchased = savedState.totalUpgradesPurchased;
+                autoHarvesting = savedState.autoHarvesting;
+                fertilizer = savedState.fertilizer;
+            }
+        }
 
-        // Update UI display
+        // Save the current game state to localStorage
+        function saveGameState() {
+            const gameState = {
+                mungBeans,
+                mps,
+                mpc,
+                totalMungBeansHarvested,
+                totalWaitressesDefeated,
+                prestigeCount,
+                totalUpgradesPurchased,
+                autoHarvesting,
+                fertilizer
+            };
+            localStorage.setItem("mungBeanFarmerState", JSON.stringify(gameState));
+        }
+
         function updateUI() {
             document.getElementById("mungBeansCount").textContent = `Mung Beans: ${mungBeans}`;
             document.getElementById("totalHarvested").textContent = totalMungBeansHarvested;
@@ -163,155 +176,73 @@
             document.getElementById("prestigeResets").textContent = prestigeCount;
             document.getElementById("mps").textContent = mps;
             document.getElementById("mpc").textContent = mpc;
+            document.getElementById("upgradesPurchased").textContent = totalUpgradesPurchased;
         }
 
         // Harvesting function
         function harvestMungBeans(amount) {
             mungBeans += amount * harvestingSpeed * fertilizer;
             totalMungBeansHarvested += amount * harvestingSpeed * fertilizer;
+            saveGameState(); // Save progress after each harvest
             updateUI();
         }
 
-        // Create a random waitress with a negative effect
-        function createWaitress() {
-            const randomIndex = Math.floor(Math.random() * waitressTypes.length);
-            const waitress = waitressTypes[randomIndex];
-            waitress.appearanceTime = Date.now();
-            waitresses.push(waitress);
-            totalWaitressesDefeated++;
-            activateWaitressEffect(waitress);
+        // Calculate Prestige bonus based on total mung beans and upgrades
+        function calculatePrestigeBonus() {
+            const upgradeBonus = totalUpgradesPurchased * 0.1; // 0.1 per upgrade purchased
+            const harvestBonus = Math.floor(totalMungBeansHarvested / 100000); // Bonus based on total harvested (1 bonus for every 100k harvested)
+            return (upgradeBonus + harvestBonus);
         }
 
-        // Activate waitress effect (e.g., slow down or steal)
-        function activateWaitressEffect(waitress) {
-            if (waitress.effect === "slow") {
-                harvestingSpeed = 0.5;
-                showWaitressEffect("Slow Waitress has slowed down your harvest speed!");
-                setTimeout(() => {
-                    harvestingSpeed = 1;
-                    showWaitressEffect("Slow Waitress effect is over!");
-                }, waitress.duration);
-            } else if (waitress.effect === "steal") {
-                const stolenBeans = Math.floor(mungBeans * 0.1);
-                mungBeans -= stolenBeans;
-                showWaitressEffect(`Stealer Waitress stole ${stolenBeans} mung beans!`);
-                setTimeout(() => {
-                    showWaitressEffect("Stealer Waitress effect is over!");
-                }, waitress.duration);
-            } else if (waitress.effect === "disrupt") {
-                autoHarvesting = 0;
-                showWaitressEffect("Disruption Waitress disabled your auto-harvest!");
-                setTimeout(() => {
-                    autoHarvesting = 1;
-                    showWaitressEffect("Disruption Waitress effect is over!");
-                }, waitress.duration);
-            }
-        }
-
-        // Show waitress effect message
-        function showWaitressEffect(message) {
-            const alertElement = document.getElementById("waitressEffect");
-            alertElement.style.display = "block";
-            alertElement.textContent = message;
-            setTimeout(() => {
-                alertElement.style.display = "none";
-            }, 3000);
-        }
-
-        // Check if a waitress should appear
-        function checkForWaitresses() {
-            if (Math.random() < 0.1) {
-                createWaitress();
+        // Prestige reset functionality
+        function prestige() {
+            if (mungBeans >= 1000000) {
+                const prestigeBonus = calculatePrestigeBonus();
+                mpc *= (1 + prestigeBonus); // Apply prestige bonus to MPC
+                mps *= (1 + prestigeBonus); // Optionally, apply to MPS as well
+                prestigeCount++;
+                totalMungBeansHarvested = 0;
+                mungBeans = 0;
+                totalWaitressesDefeated = 0;
+                totalUpgradesPurchased = 0; // Optionally reset upgrades purchased
+                saveGameState(); // Save progress after prestige reset
+                updateUI();
             }
         }
 
         // Button listeners for upgrades
+        const upgrades = [
+            { id: "fertilizerUpgrade", cost: 50, effect: () => { fertilizer = 1.2; totalUpgradesPurchased++; saveGameState(); }, description: "Increases Mung Beans per Click by 1." },
+            { id: "autoHarvestUpgrade", cost: 500, effect: () => { autoHarvesting = 5; totalUpgradesPurchased++; saveGameState(); }, description: "Harvests 5 Mung Beans per second automatically." },
+            { id: "speedBoost", cost: 1000, effect: () => { mpc += 5; totalUpgradesPurchased++; saveGameState(); }, description: "Increases Mung Beans per Click by 5." },
+        ];
+
+        upgrades.forEach(upgrade => {
+            const button = document.getElementById(upgrade.id);
+            button.addEventListener("click", () => {
+                if (mungBeans >= upgrade.cost) {
+                    mungBeans -= upgrade.cost;
+                    upgrade.effect();
+                    saveGameState(); // Save progress after upgrade purchase
+                    updateUI();
+                }
+            });
+        });
+
         document.getElementById("harvestButton").addEventListener("click", () => {
             harvestMungBeans(mpc);
         });
 
-        document.getElementById("basicFertilizer").addEventListener("click", () => {
-            if (mungBeans >= 50) {
-                mungBeans -= 50;
-                mpc += 1;
-                updateUI();
-            }
+        document.getElementById("prestigeUpgrade").addEventListener("click", () => {
+            prestige();
         });
 
-        document.getElementById("autoHarvestUpgrade").addEventListener("click", () => {
-            if (mungBeans >= 500) {
-                mungBeans -= 500;
-                autoHarvesting = 5;
-                updateUI();
-            }
-        });
-
-        document.getElementById("speedBoost").addEventListener("click", () => {
-            if (mungBeans >= 1000) {
-                mungBeans -= 1000;
-                mpc += 5;
-                updateUI();
-            }
-        });
-
-        document.getElementById("megaDrone").addEventListener("click", () => {
-            if (mungBeans >= 5000) {
-                mungBeans -= 5000;
-                autoHarvesting = 50;
-                updateUI();
-            }
-        });
-
-        document.getElementById("premiumAutoHarvest").addEventListener("click", () => {
-            if (mungBeans >= 20000) {
-                mungBeans -= 20000;
-                autoHarvesting = 100;
-                updateUI();
-            }
-        });
-
-        document.getElementById("waitressRepellent").addEventListener("click", () => {
-            if (mungBeans >= 5000) {
-                mungBeans -= 5000;
-                setTimeout(() => {}, 30000);
-                updateUI();
-            }
-        });
-
-        document.getElementById("superFertilizer").addEventListener("click", () => {
-            if (mungBeans >= 10000) {
-                mungBeans -= 10000;
-                mpc += 10;
-                updateUI();
-            }
-        });
-
-        document.getElementById("beanMultiplier").addEventListener("click", () => {
-            if (mungBeans >= 25000) {
-                mungBeans -= 25000;
-                mpc *= 2;
-                updateUI();
-            }
-        });
-
-        document.getElementById("fastFarming").addEventListener("click", () => {
-            if (mungBeans >= 50000) {
-                mungBeans -= 50000;
-                mps *= 2;
-                updateUI();
-            }
-        });
-
+        // Start the game loop
         setInterval(() => {
-            checkForWaitresses();
+            harvestMungBeans(autoHarvesting);
         }, 1000);
 
-        setInterval(() => {
-            if (autoHarvesting) {
-                harvestMungBeans(autoHarvesting);
-            }
-        }, 1000);
-
+        loadGameState(); // Load saved progress on page load
         updateUI();
     </script>
 </body>
