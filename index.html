@@ -39,10 +39,31 @@
             padding: 10px;
             background-color: #ffe600;
             cursor: pointer;
+            display: inline-block;
+            width: 200px;
+            border: 2px solid #ccc;
+        }
+
+        .upgrade.purchased {
+            background-color: #9e9e9e;
+            color: #fff;
+            cursor: not-allowed;
         }
 
         .upgrade:hover {
             background-color: #ffcc00;
+        }
+
+        .upgrade-description {
+            font-size: 14px;
+            margin-top: 5px;
+            color: #555;
+        }
+
+        .stat {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #333;
         }
 
         #prestige {
@@ -59,6 +80,12 @@
             color: red;
             margin-top: 20px;
         }
+
+        .upgrade-description {
+            font-size: 14px;
+            margin-top: 5px;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -70,36 +97,45 @@
     <div id="mung-beans">Mung Beans: 0</div>
     <button id="farm-button" class="button">Farm Mung Beans!</button>
 
+    <div id="stats">
+        <div class="stat" id="mungs-per-click">Mungs per Click: 1</div>
+        <div class="stat" id="mungs-per-second">Mungs per Second: 0</div>
+    </div>
+
     <div id="upgrades">
         <h3>Upgrades:</h3>
 
         <!-- Mung Bean Upgrades -->
-        <div class="upgrade" id="automatic-planting">Automatic Planting - Cost: 10 Mung Beans</div>
-        <div class="upgrade" id="automatic-planting-tier2">Tier 2: Mung Seed Spreader - Cost: 100 Mung Beans</div>
-        <div class="upgrade" id="automatic-planting-tier3">Tier 3: Hyper Mung Seeder - Cost: 1000 Mung Beans</div>
-        <div class="upgrade" id="automatic-planting-tier4">Tier 4: Ultra Mung Seeder - Cost: 10000 Mung Beans</div>
-        <div class="upgrade" id="automatic-planting-tier5">Tier 5: Galactic Seeder - Cost: 100000 Mung Beans</div>
-        
+        <div class="upgrade" id="automatic-planting">
+            Automatic Planting - Cost: 10 Mung Beans
+            <div class="upgrade-description">Automates the planting process, increasing mung beans per click by 2.</div>
+        </div>
+        <div class="upgrade" id="automatic-planting-tier2">
+            Tier 2: Mung Seed Spreader - Cost: 100 Mung Beans
+            <div class="upgrade-description">Spreads seeds more efficiently, increasing mung beans per click by 5.</div>
+        </div>
+        <div class="upgrade" id="automatic-planting-tier3">
+            Tier 3: Hyper Mung Seeder - Cost: 1000 Mung Beans
+            <div class="upgrade-description">Increases the speed of planting, adding 20 mung beans per click.</div>
+        </div>
+
         <!-- Mung Juice Upgrades -->
-        <div class="upgrade" id="mung-juice-machine">Mung Juice Machine - Cost: 100 Mung Beans</div>
-        <div class="upgrade" id="mung-juice-machine-tier2">Tier 2: Mung Juice Blaster - Cost: 1000 Mung Beans</div>
-        <div class="upgrade" id="mung-juice-machine-tier3">Tier 3: Mung Juice Factory - Cost: 10000 Mung Beans</div>
-        <div class="upgrade" id="mung-juice-machine-tier4">Tier 4: Mung Juice MegaTank - Cost: 100000 Mung Beans</div>
-        <div class="upgrade" id="mung-juice-machine-tier5">Tier 5: Mung Juice Empire - Cost: 1000000 Mung Beans</div>
-        
+        <div class="upgrade" id="mung-juice-machine">
+            Mung Juice Machine - Cost: 100 Mung Beans
+            <div class="upgrade-description">A mung juice machine that adds 10 mung beans per click.</div>
+        </div>
+
         <!-- Fertilizer Upgrades -->
-        <div class="upgrade" id="super-fertilizer">Super Fertilizer - Cost: 500 Mung Beans</div>
-        <div class="upgrade" id="super-fertilizer-tier2">Tier 2: Fertilizer Uprising - Cost: 5000 Mung Beans</div>
-        <div class="upgrade" id="super-fertilizer-tier3">Tier 3: Super Mega Fertilizer - Cost: 50000 Mung Beans</div>
-        <div class="upgrade" id="super-fertilizer-tier4">Tier 4: Ultimate Fertilizer - Cost: 500000 Mung Beans</div>
-        <div class="upgrade" id="super-fertilizer-tier5">Tier 5: Mungtopia Fertilizer - Cost: 5000000 Mung Beans</div>
-        
+        <div class="upgrade" id="super-fertilizer">
+            Super Fertilizer - Cost: 500 Mung Beans
+            <div class="upgrade-description">Enhances growth speed, increasing mung beans per click by 30.</div>
+        </div>
+
         <!-- Mung Farming Robot Upgrades -->
-        <div class="upgrade" id="mung-farming-robot">Mung Farming Robot - Cost: 2000 Mung Beans</div>
-        <div class="upgrade" id="mung-farming-robot-tier2">Tier 2: Mega Mung Farming Robot - Cost: 20000 Mung Beans</div>
-        <div class="upgrade" id="mung-farming-robot-tier3">Tier 3: Robo-Farming Overlord - Cost: 200000 Mung Beans</div>
-        <div class="upgrade" id="mung-farming-robot-tier4">Tier 4: Galactic Mung Farmbot - Cost: 2000000 Mung Beans</div>
-        <div class="upgrade" id="mung-farming-robot-tier5">Tier 5: Mungbot Army - Cost: 20000000 Mung Beans</div>
+        <div class="upgrade" id="mung-farming-robot">
+            Mung Farming Robot - Cost: 2000 Mung Beans
+            <div class="upgrade-description">A robot that helps automate mung bean farming, adding 100 mung beans per click.</div>
+        </div>
 
     </div>
 
@@ -112,43 +148,30 @@
 </div>
 
 <script>
-    let mungBeans = 0;
-    let mungBeansPerClick = 1;
-    let upgrades = {
-        // Mung Bean Upgrades
-        automaticPlanting: { cost: 10, effect: 2, unlocked: false, tier: 1 },
-        automaticPlantingTier2: { cost: 100, effect: 5, unlocked: false, tier: 2 },
-        automaticPlantingTier3: { cost: 1000, effect: 20, unlocked: false, tier: 3 },
-        automaticPlantingTier4: { cost: 10000, effect: 50, unlocked: false, tier: 4 },
-        automaticPlantingTier5: { cost: 100000, effect: 100, unlocked: false, tier: 5 },
+    let mungBeans = parseInt(localStorage.getItem("mungBeans")) || 0;
+    let mungBeansPerClick = parseInt(localStorage.getItem("mungBeansPerClick")) || 1;
+    let mungBeansPerSecond = parseInt(localStorage.getItem("mungBeansPerSecond")) || 0;
+    let prestigePoints = parseInt(localStorage.getItem("prestigePoints")) || 0;
+    let unlockedUpgrades = JSON.parse(localStorage.getItem("unlockedUpgrades")) || {};
+    let waitressEffect = 0;
 
-        // Mung Juice Upgrades
-        mungJuiceMachine: { cost: 100, effect: 10, unlocked: false, tier: 1 },
-        mungJuiceMachineTier2: { cost: 1000, effect: 25, unlocked: false, tier: 2 },
-        mungJuiceMachineTier3: { cost: 10000, effect: 50, unlocked: false, tier: 3 },
-        mungJuiceMachineTier4: { cost: 100000, effect: 100, unlocked: false, tier: 4 },
-        mungJuiceMachineTier5: { cost: 1000000, effect: 500, unlocked: false, tier: 5 },
-
-        // Fertilizer Upgrades
-        superFertilizer: { cost: 500, effect: 30, unlocked: false, tier: 1 },
-        superFertilizerTier2: { cost: 5000, effect: 100, unlocked: false, tier: 2 },
-        superFertilizerTier3: { cost: 50000, effect: 200, unlocked: false, tier: 3 },
-        superFertilizerTier4: { cost: 500000, effect: 500, unlocked: false, tier: 4 },
-        superFertilizerTier5: { cost: 5000000, effect: 1000, unlocked: false, tier: 5 },
-
-        // Mung Farming Robot Upgrades
-        mungFarmingRobot: { cost: 2000, effect: 100, unlocked: false, tier: 1 },
-        mungFarmingRobotTier2: { cost: 20000, effect: 500, unlocked: false, tier: 2 },
-        mungFarmingRobotTier3: { cost: 200000, effect: 1000, unlocked: false, tier: 3 },
-        mungFarmingRobotTier4: { cost: 2000000, effect: 2000, unlocked: false, tier: 4 },
-        mungFarmingRobotTier5: { cost: 20000000, effect: 5000, unlocked: false, tier: 5 }
+    const upgrades = {
+        "automatic-planting": { cost: 10, effect: 2 },
+        "automatic-planting-tier2": { cost: 100, effect: 5 },
+        "automatic-planting-tier3": { cost: 1000, effect: 20 },
+        "mung-juice-machine": { cost: 100, effect: 10 },
+        "super-fertilizer": { cost: 500, effect: 30 },
+        "mung-farming-robot": { cost: 2000, effect: 100 },
     };
 
-    let prestigePoints = 0;
-    let waitressEffect = 0;
-    
     function updateMungBeansDisplay() {
         document.getElementById('mung-beans').textContent = `Mung Beans: ${mungBeans}`;
+        document.getElementById('mungs-per-click').textContent = `Mungs per Click: ${mungBeansPerClick}`;
+        document.getElementById('mungs-per-second').textContent = `Mungs per Second: ${mungBeansPerSecond}`;
+
+        localStorage.setItem("mungBeans", mungBeans);
+        localStorage.setItem("mungBeansPerClick", mungBeansPerClick);
+        localStorage.setItem("mungBeansPerSecond", mungBeansPerSecond);
     }
 
     function updateWaitressEffect() {
@@ -159,41 +182,42 @@
         }
     }
 
+    function unlockUpgrade(upgradeId) {
+        if (mungBeans >= upgrades[upgradeId].cost && !unlockedUpgrades[upgradeId]) {
+            mungBeans -= upgrades[upgradeId].cost;
+            unlockedUpgrades[upgradeId] = true;
+            mungBeansPerClick += upgrades[upgradeId].effect;
+
+            if (upgradeId === "mung-farming-robot") {
+                mungBeansPerSecond += upgrades[upgradeId].effect;  // Mung farming robots provide mung per second
+            }
+
+            localStorage.setItem("unlockedUpgrades", JSON.stringify(unlockedUpgrades));
+            updateMungBeansDisplay();
+
+            // Mark upgrade as purchased
+            document.getElementById(upgradeId).classList.add("purchased");
+        }
+    }
+
     document.getElementById('farm-button').addEventListener('click', function() {
         mungBeans += mungBeansPerClick;
         updateMungBeansDisplay();
     });
 
-    function unlockUpgrade(upgradeId) {
-        const upgrade = upgrades[upgradeId];
-        if (mungBeans >= upgrade.cost && !upgrade.unlocked) {
-            mungBeans -= upgrade.cost;
-            upgrade.unlocked = true;
-            mungBeansPerClick += upgrade.effect;
-            updateMungBeansDisplay();
-        }
-    }
-
     // Unlock upgrades
-    document.getElementById('automatic-planting').addEventListener('click', function() { unlockUpgrade('automaticPlanting'); });
-    document.getElementById('mung-juice-machine').addEventListener('click', function() { unlockUpgrade('mungJuiceMachine'); });
-    document.getElementById('super-fertilizer').addEventListener('click', function() { unlockUpgrade('superFertilizer'); });
-    document.getElementById('mung-farming-robot').addEventListener('click', function() { unlockUpgrade('mungFarmingRobot'); });
-
-    // Tiered upgrades
     Object.keys(upgrades).forEach(upgradeId => {
-        if (upgrades[upgradeId].tier > 1) {
-            document.getElementById(upgradeId).addEventListener('click', function() {
-                unlockUpgrade(upgradeId);
-            });
-        }
+        document.getElementById(upgradeId).addEventListener('click', function() { unlockUpgrade(upgradeId); });
     });
 
     document.getElementById('prestige').addEventListener('click', function() {
         prestigePoints += Math.floor(mungBeans / 10000);
         mungBeans = 0;
         mungBeansPerClick = 1;
-        upgrades = { ...upgrades }; // Reset all upgrades
+        mungBeansPerSecond = 0;
+        unlockedUpgrades = {}; // Reset unlocked upgrades
+        localStorage.setItem("prestigePoints", prestigePoints);
+        localStorage.setItem("unlockedUpgrades", JSON.stringify(unlockedUpgrades));
         updateMungBeansDisplay();
         alert('You have prestiged! Your mung beans have been reset, but you have earned ' + prestigePoints + ' prestige points!');
     });
@@ -214,7 +238,12 @@
             updateMungBeansDisplay();
         }
         updateWaitressEffect();
+
+        // Automatically gain mungs per second from robots and farming upgrades
+        mungBeans += mungBeansPerSecond;
+        updateMungBeansDisplay();
     }, 1000);
 </script>
+
 </body>
 </html>
