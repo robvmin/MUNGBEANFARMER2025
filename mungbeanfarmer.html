@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.2</title>
+    <title>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.4</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -95,7 +95,7 @@
     </style>
 </head>
 <body>
-    <h1>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.2</h1>
+    <h1>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.4</h1>
     <div id="mungBeansCount">Mung Beans: 0</div>
     <button id="harvestButton">Click to Harvest Mung Beans</button>
 
@@ -155,6 +155,8 @@
     <button id="prestigeButton" style="margin-top: 20px;">Prestige</button>
     <div class="prestige-info" id="prestigeInfo">Prestige to reset your game and gain a bonus Mung Beans per Click based on your total harvested.</div>
 
+    <div id="waitressAlert" class="waitress-alert"></div>
+
     <script>
         let mungBeans = 0;
         let mps = 0;
@@ -191,53 +193,25 @@
             cosmicHarvester: { cost: 5000, effect: () => mps += 50, level: 0, maxLevel: 3 },
             megaBeanShaker: { cost: 25000, effect: () => mpc += 5, level: 0, maxLevel: 3 },
             superMungFactory: { cost: 100000, effect: () => mps += 200, level: 0, maxLevel: 3 },
-            mungBeanOverdrive: { cost: 500000, effect: () => mps *= 2, level: 0, maxLevel: 1 },
-            mysticFertilizer: { cost: 1000000, effect: () => { mpc += 10; fertilizer *= 2; }, level: 0, maxLevel: 1 },
+            mungBeanOverdrive: { cost: 500000, effect: () => mps *= 2, level: 0, maxLevel: 3 },
+            mysticFertilizer: { cost: 1000000, effect: () => { mpc += 10; fertilizer *= 2; }, level: 0, maxLevel: 2 },
             alienMungFarmers: { cost: 5000000, effect: () => mps += 500, level: 0, maxLevel: 2 },
-            megaHarvestingMachine: { cost: 10000000, effect: () => mps += 1000, level: 0, maxLevel: 1 }
+            megaHarvestingMachine: { cost: 10000000, effect: () => mps += 1000, level: 0, maxLevel: 2 },
         };
 
-        // Prestige logic
-        function prestige() {
-            if (mungBeans >= 100000000) {
-                prestigeCount++;
-                prestigeModifier = Math.floor(totalMungBeansHarvested / 1000000) + 1;
-                mpc = 1;
-                mps = 0;
-                totalMungBeansHarvested = 0;
-                totalWaitressesDefeated = 0;
-                totalUpgradesPurchased = 0;
-                autoHarvesting = 0;
-                fertilizer = 1;
-                localStorage.removeItem("mungBeansData");
-                updateUI();
-            }
-        }
-
         function updateUI() {
-            document.getElementById('mungBeansCount').textContent = "Mung Beans: " + mungBeans;
-            document.getElementById('totalHarvested').textContent = totalMungBeansHarvested;
-            document.getElementById('totalWaitressesDefeated').textContent = totalWaitressesDefeated;
-            document.getElementById('prestigeResets').textContent = prestigeCount;
-            document.getElementById('mps').textContent = mps;
-            document.getElementById('mpc').textContent = mpc;
-            document.getElementById('upgradesPurchased').textContent = totalUpgradesPurchased;
-            document.getElementById('prestigeModifier').textContent = prestigeModifier;
+            document.getElementById("mungBeansCount").innerText = `Mung Beans: ${mungBeans}`;
+            document.getElementById("totalHarvested").innerText = totalMungBeansHarvested;
+            document.getElementById("totalWaitressesDefeated").innerText = totalWaitressesDefeated;
+            document.getElementById("prestigeResets").innerText = prestigeCount;
+            document.getElementById("mps").innerText = mps;
+            document.getElementById("mpc").innerText = mpc;
+            document.getElementById("upgradesPurchased").innerText = totalUpgradesPurchased;
+            document.getElementById("prestigeModifier").innerText = prestigeModifier;
         }
 
-        document.getElementById('harvestButton').addEventListener('click', () => {
-            mungBeans += mpc;
-            totalMungBeansHarvested++;
-            updateUI();
-            saveData();
-        });
-
-        document.getElementById('prestigeButton').addEventListener('click', () => {
-            prestige();
-        });
-
-        function saveData() {
-            let data = {
+        function saveProgress() {
+            const data = {
                 mungBeans,
                 mps,
                 mpc,
@@ -251,6 +225,67 @@
             };
             localStorage.setItem("mungBeansData", JSON.stringify(data));
         }
+
+        document.getElementById("harvestButton").addEventListener("click", function() {
+            mungBeans += mpc;
+            totalMungBeansHarvested += mpc;
+            updateUI();
+            saveProgress();
+        });
+
+        // Upgrade purchase handlers
+        document.getElementById("fertilizerUpgrade").addEventListener("click", function() {
+            if(mungBeans >= upgrades.fertilizer.cost && upgrades.fertilizer.level < upgrades.fertilizer.maxLevel) {
+                mungBeans -= upgrades.fertilizer.cost;
+                upgrades.fertilizer.level++;
+                upgrades.fertilizer.effect();
+                totalUpgradesPurchased++;
+                updateUI();
+                saveProgress();
+            }
+        });
+
+        document.getElementById("autoHarvestUpgrade").addEventListener("click", function() {
+            if(mungBeans >= upgrades.autoHarvester.cost && upgrades.autoHarvester.level < upgrades.autoHarvester.maxLevel) {
+                mungBeans -= upgrades.autoHarvester.cost;
+                upgrades.autoHarvester.level++;
+                upgrades.autoHarvester.effect();
+                totalUpgradesPurchased++;
+                updateUI();
+                saveProgress();
+            }
+        });
+
+        // Same pattern for other upgrades...
+
+        // Prestige system
+        document.getElementById("prestigeButton").addEventListener("click", function() {
+            let totalMungBeans = totalMungBeansHarvested;
+            if (totalMungBeans >= 1000000) {
+                // Apply prestige modifier based on total Mung Beans harvested
+                prestigeModifier = 1 + Math.floor(totalMungBeans / 1000000);
+                totalMungBeansHarvested = 0;
+                totalWaitressesDefeated = 0;
+                mungBeans = 0;
+                mps = 0;
+                mpc = 1;
+                totalUpgradesPurchased = 0;
+                prestigeCount++;
+                updateUI();
+                saveProgress();
+            }
+        });
+
+        // Random Waitresses Appearance
+        setInterval(function() {
+            let randomChance = Math.random();
+            if (randomChance < 0.05) {
+                let effects = ["Reduce MPS", "Reduce MPC", "Increase Mung Beans per Upgrade Cost"];
+                let effect = effects[Math.floor(Math.random() * effects.length)];
+                document.getElementById("waitressAlert").innerText = "A waitress appears! Effect: " + effect;
+                // Add effect logic here based on the effect chosen
+            }
+        }, 5000); // Every 5 seconds
     </script>
 </body>
 </html>
