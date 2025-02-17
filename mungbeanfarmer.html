@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.0</title>
+    <title>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.2</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -95,7 +95,7 @@
     </style>
 </head>
 <body>
-    <h1>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.0</h1>
+    <h1>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.2</h1>
     <div id="mungBeansCount">Mung Beans: 0</div>
     <button id="harvestButton">Click to Harvest Mung Beans</button>
 
@@ -149,10 +149,11 @@
         <p>Mung Beans Per Second (MPS): <span id="mps">0</span></p>
         <p>Mung Beans Per Click (MPC): <span id="mpc">1</span></p>
         <p>Upgrades Purchased: <span id="upgradesPurchased">0</span></p>
+        <p>Prestige Modifier: <span id="prestigeModifier">1</span></p>
     </div>
 
     <button id="prestigeButton" style="margin-top: 20px;">Prestige</button>
-    <div class="prestige-info" id="prestigeInfo">Prestige to reset your game and gain bonus Mung Beans per Click based on your total harvested.</div>
+    <div class="prestige-info" id="prestigeInfo">Prestige to reset your game and gain a bonus Mung Beans per Click based on your total harvested.</div>
 
     <script>
         let mungBeans = 0;
@@ -164,6 +165,7 @@
         let totalUpgradesPurchased = 0;
         let autoHarvesting = 0;
         let fertilizer = 1;
+        let prestigeModifier = 1;
 
         // Load saved data
         if(localStorage.getItem("mungBeansData")) {
@@ -177,6 +179,7 @@
             totalUpgradesPurchased = savedData.totalUpgradesPurchased || 0;
             autoHarvesting = savedData.autoHarvesting || 0;
             fertilizer = savedData.fertilizer || 1;
+            prestigeModifier = savedData.prestigeModifier || 1;
             updateUI();
         }
 
@@ -198,92 +201,56 @@
         function prestige() {
             if (mungBeans >= 100000000) {
                 prestigeCount++;
-                let bonus = Math.floor(mungBeans / 1000000);
-                mpc = 1 + bonus;
+                prestigeModifier = Math.floor(totalMungBeansHarvested / 1000000) + 1;
+                mpc = 1;
                 mps = 0;
-                mungBeans = 0;
                 totalMungBeansHarvested = 0;
-                autoHarvesting = 0;
+                totalWaitressesDefeated = 0;
                 totalUpgradesPurchased = 0;
+                autoHarvesting = 0;
+                fertilizer = 1;
+                localStorage.removeItem("mungBeansData");
                 updateUI();
-                saveProgress();
-                document.getElementById("prestigeResets").textContent = prestigeCount;
             }
         }
 
-        // Harvest mung beans
-        function harvestMungBeans(amount) {
-            mungBeans += amount;
-            totalMungBeansHarvested += amount;
-            updateUI();
-            saveProgress();
-        }
-
-        // Event listener for click to harvest
-        document.getElementById("harvestButton").addEventListener("click", () => harvestMungBeans(mpc));
-
-        // Update UI elements
         function updateUI() {
-            document.getElementById("mungBeansCount").textContent = `Mung Beans: ${mungBeans}`;
-            document.getElementById("totalHarvested").textContent = totalMungBeansHarvested;
-            document.getElementById("mps").textContent = mps;
-            document.getElementById("mpc").textContent = mpc;
-            document.getElementById("totalWaitressesDefeated").textContent = totalWaitressesDefeated;
-            document.getElementById("upgradesPurchased").textContent = totalUpgradesPurchased;
-            document.getElementById("prestigeResets").textContent = prestigeCount;
+            document.getElementById('mungBeansCount').textContent = "Mung Beans: " + mungBeans;
+            document.getElementById('totalHarvested').textContent = totalMungBeansHarvested;
+            document.getElementById('totalWaitressesDefeated').textContent = totalWaitressesDefeated;
+            document.getElementById('prestigeResets').textContent = prestigeCount;
+            document.getElementById('mps').textContent = mps;
+            document.getElementById('mpc').textContent = mpc;
+            document.getElementById('upgradesPurchased').textContent = totalUpgradesPurchased;
+            document.getElementById('prestigeModifier').textContent = prestigeModifier;
         }
 
-        // Event listeners for upgrades
-        document.getElementById("fertilizerUpgrade").addEventListener("click", () => handleUpgrade(upgrades.fertilizer));
-        document.getElementById("autoHarvestUpgrade").addEventListener("click", () => handleUpgrade(upgrades.autoHarvester));
-        document.getElementById("speedBoost").addEventListener("click", () => handleUpgrade(upgrades.speedBoost));
-        document.getElementById("cosmicHarvester").addEventListener("click", () => handleUpgrade(upgrades.cosmicHarvester));
-        document.getElementById("megaBeanShaker").addEventListener("click", () => handleUpgrade(upgrades.megaBeanShaker));
-        document.getElementById("superMungFactory").addEventListener("click", () => handleUpgrade(upgrades.superMungFactory));
-        document.getElementById("mungBeanOverdrive").addEventListener("click", () => handleUpgrade(upgrades.mungBeanOverdrive));
-        document.getElementById("mysticFertilizer").addEventListener("click", () => handleUpgrade(upgrades.mysticFertilizer));
-        document.getElementById("alienMungFarmers").addEventListener("click", () => handleUpgrade(upgrades.alienMungFarmers));
-        document.getElementById("megaHarvestingMachine").addEventListener("click", () => handleUpgrade(upgrades.megaHarvestingMachine));
+        document.getElementById('harvestButton').addEventListener('click', () => {
+            mungBeans += mpc;
+            totalMungBeansHarvested++;
+            updateUI();
+            saveData();
+        });
 
-        // Prestige button event
-        document.getElementById("prestigeButton").addEventListener("click", prestige);
+        document.getElementById('prestigeButton').addEventListener('click', () => {
+            prestige();
+        });
 
-        // Handle upgrade purchases
-        function handleUpgrade(upgrade) {
-            if (mungBeans >= upgrade.cost && upgrade.level < upgrade.maxLevel) {
-                mungBeans -= upgrade.cost;
-                upgrade.level++;
-                upgrade.effect();
-                totalUpgradesPurchased++;
-                updateUI();
-                saveProgress();
-            }
+        function saveData() {
+            let data = {
+                mungBeans,
+                mps,
+                mpc,
+                totalMungBeansHarvested,
+                totalWaitressesDefeated,
+                prestigeCount,
+                totalUpgradesPurchased,
+                autoHarvesting,
+                fertilizer,
+                prestigeModifier
+            };
+            localStorage.setItem("mungBeansData", JSON.stringify(data));
         }
-
-        // Save the game state to local storage
-        function saveProgress() {
-            localStorage.setItem("mungBeansData", JSON.stringify({
-                mungBeans: mungBeans,
-                mps: mps,
-                mpc: mpc,
-                totalMungBeansHarvested: totalMungBeansHarvested,
-                totalWaitressesDefeated: totalWaitressesDefeated,
-                prestigeCount: prestigeCount,
-                totalUpgradesPurchased: totalUpgradesPurchased,
-                autoHarvesting: autoHarvesting,
-                fertilizer: fertilizer
-            }));
-        }
-
-        // Auto harvesting every second
-        setInterval(() => {
-            if (autoHarvesting > 0) {
-                harvestMungBeans(autoHarvesting);
-            }
-        }, 1000);
-
-        // Initial UI update
-        updateUI();
     </script>
 </body>
 </html>
