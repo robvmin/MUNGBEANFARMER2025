@@ -88,28 +88,40 @@
     <div id="upgrades">
         <!-- Upgrades Section -->
         <div class="upgrade">
-            <button id="autoHarvestUpgrade">Auto-Harvest Upgrade: $100</button>
-            <div class="upgrade-info">Automatically harvest 10% of your mung beans every second.</div>
+            <button id="basicFertilizer">Basic Fertilizer: 50 Mung Beans</button>
+            <div class="upgrade-info">Increases your Mung Beans per Click by 1.</div>
         </div>
         <div class="upgrade">
-            <button id="speedBoostUpgrade">Speed Boost: $500</button>
-            <div class="upgrade-info">Doubles your harvesting speed.</div>
+            <button id="autoHarvestUpgrade">Auto-Harvest Upgrade: 500 Mung Beans</button>
+            <div class="upgrade-info">Automatically harvests 5 Mung Beans per second.</div>
         </div>
         <div class="upgrade">
-            <button id="fertilizerUpgrade">Fertilizer: $150</button>
-            <div class="upgrade-info">Increases mung bean yield by 50% per click.</div>
+            <button id="speedBoost">Speed Boost: 1000 Mung Beans</button>
+            <div class="upgrade-info">Increases your Mung Beans per Click by 5.</div>
         </div>
         <div class="upgrade">
-            <button id="waitressRepellentUpgrade">Waitress Repellent: $1000</button>
+            <button id="megaDrone">Mega Drone: 5000 Mung Beans</button>
+            <div class="upgrade-info">Harvests 50 Mung Beans per second.</div>
+        </div>
+        <div class="upgrade">
+            <button id="premiumAutoHarvest">Premium Auto-Harvest: 20000 Mung Beans</button>
+            <div class="upgrade-info">Automatically harvests 100 Mung Beans per second.</div>
+        </div>
+        <div class="upgrade">
+            <button id="waitressRepellent">Waitress Repellent: 5000 Mung Beans</button>
             <div class="upgrade-info">Prevents waitresses from appearing for 30 seconds.</div>
         </div>
         <div class="upgrade">
-            <button id="harvestDroneUpgrade">Harvest Drone: $5000</button>
-            <div class="upgrade-info">Automates mung bean harvesting. Harvest 100 beans per second.</div>
+            <button id="superFertilizer">Super Fertilizer: 10000 Mung Beans</button>
+            <div class="upgrade-info">Increases Mung Beans per Click by 10.</div>
         </div>
         <div class="upgrade">
-            <button id="prestigeUpgrade">Prestige: $10,000</button>
-            <div class="upgrade-info">Resets your game but gives you a permanent 2x bonus to mung beans.</div>
+            <button id="beanMultiplier">Bean Multiplier: 25000 Mung Beans</button>
+            <div class="upgrade-info">Multiply all Mung Beans per Click by 2.</div>
+        </div>
+        <div class="upgrade">
+            <button id="fastFarming">Fast Farming: 50000 Mung Beans</button>
+            <div class="upgrade-info">Double your Mung Beans per second rate.</div>
         </div>
     </div>
 
@@ -126,46 +138,41 @@
 
     <script>
         let mungBeans = 0;
-        let harvestingSpeed = 1;
-        let autoHarvesting = false;
-        let gameMoney = 0;
-        let fertilizer = 1;
-        let waitresses = [];
-        let harvestDroneActive = false;
+        let mps = 0;
+        let mpc = 1;
         let totalMungBeansHarvested = 0;
         let totalWaitressesDefeated = 0;
         let prestigeCount = 0;
-        let mps = 0;
-        let mpc = 1;
+        let waitresses = [];
+        let autoHarvesting = 0;
+        let harvestingSpeed = 1;
+        let fertilizer = 1;
 
+        // Waitress types
         const waitressTypes = [
             { name: "Slow Waitress", effect: "slow", duration: 5000 },
             { name: "Stealer Waitress", effect: "steal", duration: 5000 },
-            { name: "Sabotage Waitress", effect: "sabotage", duration: 5000 },
-            { name: "Distraction Waitress", effect: "distraction", duration: 3000 }
+            { name: "Disruption Waitress", effect: "disrupt", duration: 3000 },
         ];
 
+        // Update UI display
         function updateUI() {
             document.getElementById("mungBeansCount").textContent = `Mung Beans: ${mungBeans}`;
             document.getElementById("totalHarvested").textContent = totalMungBeansHarvested;
             document.getElementById("totalWaitressesDefeated").textContent = totalWaitressesDefeated;
             document.getElementById("prestigeResets").textContent = prestigeCount;
-            document.getElementById("mps").textContent = mps.toFixed(1);
+            document.getElementById("mps").textContent = mps;
             document.getElementById("mpc").textContent = mpc;
         }
 
+        // Harvesting function
         function harvestMungBeans(amount) {
             mungBeans += amount * harvestingSpeed * fertilizer;
             totalMungBeansHarvested += amount * harvestingSpeed * fertilizer;
-            if (autoHarvesting) {
-                mungBeans += amount * 0.1;
-            }
-            if (harvestDroneActive) {
-                mungBeans += 100;  // Harvest drone adds 100 beans per second
-            }
             updateUI();
         }
 
+        // Create a random waitress with a negative effect
         function createWaitress() {
             const randomIndex = Math.floor(Math.random() * waitressTypes.length);
             const waitress = waitressTypes[randomIndex];
@@ -175,6 +182,7 @@
             activateWaitressEffect(waitress);
         }
 
+        // Activate waitress effect (e.g., slow down or steal)
         function activateWaitressEffect(waitress) {
             if (waitress.effect === "slow") {
                 harvestingSpeed = 0.5;
@@ -190,21 +198,17 @@
                 setTimeout(() => {
                     showWaitressEffect("Stealer Waitress effect is over!");
                 }, waitress.duration);
-            } else if (waitress.effect === "sabotage") {
-                autoHarvesting = false;
-                showWaitressEffect("Sabotage Waitress disabled auto-harvest!");
+            } else if (waitress.effect === "disrupt") {
+                autoHarvesting = 0;
+                showWaitressEffect("Disruption Waitress disabled your auto-harvest!");
                 setTimeout(() => {
-                    autoHarvesting = true;
-                    showWaitressEffect("Sabotage Waitress effect is over! Auto-harvest is restored.");
-                }, waitress.duration);
-            } else if (waitress.effect === "distraction") {
-                showWaitressEffect("Distraction Waitress is flashing on the screen!");
-                setTimeout(() => {
-                    showWaitressEffect("Distraction Waitress effect is over!");
+                    autoHarvesting = 1;
+                    showWaitressEffect("Disruption Waitress effect is over!");
                 }, waitress.duration);
             }
         }
 
+        // Show waitress effect message
         function showWaitressEffect(message) {
             const alertElement = document.getElementById("waitressEffect");
             alertElement.style.display = "block";
@@ -214,82 +218,87 @@
             }, 3000);
         }
 
+        // Check if a waitress should appear
         function checkForWaitresses() {
             if (Math.random() < 0.1) {
                 createWaitress();
             }
         }
 
+        // Button listeners for upgrades
         document.getElementById("harvestButton").addEventListener("click", () => {
-            harvestMungBeans(1);
+            harvestMungBeans(mpc);
+        });
+
+        document.getElementById("basicFertilizer").addEventListener("click", () => {
+            if (mungBeans >= 50) {
+                mungBeans -= 50;
+                mpc += 1;
+                updateUI();
+            }
         });
 
         document.getElementById("autoHarvestUpgrade").addEventListener("click", () => {
-            if (mungBeans >= 100) {
-                mungBeans -= 100;
-                autoHarvesting = true;
-                alert("Auto-Harvest upgrade purchased!");
-                updateUI();
-            } else {
-                alert("Not enough mung beans!");
-            }
-        });
-
-        document.getElementById("speedBoostUpgrade").addEventListener("click", () => {
             if (mungBeans >= 500) {
                 mungBeans -= 500;
-                harvestingSpeed *= 2;
-                alert("Speed Boost upgrade purchased!");
+                autoHarvesting = 5;
                 updateUI();
-            } else {
-                alert("Not enough mung beans!");
             }
         });
 
-        document.getElementById("fertilizerUpgrade").addEventListener("click", () => {
-            if (mungBeans >= 150) {
-                mungBeans -= 150;
-                fertilizer = 1.5;
-                alert("Fertilizer upgrade purchased!");
-                updateUI();
-            } else {
-                alert("Not enough mung beans!");
-            }
-        });
-
-        document.getElementById("waitressRepellentUpgrade").addEventListener("click", () => {
+        document.getElementById("speedBoost").addEventListener("click", () => {
             if (mungBeans >= 1000) {
                 mungBeans -= 1000;
-                alert("Waitress Repellent activated! Waitresses will not appear for 30 seconds.");
-                setTimeout(() => {
-                    alert("Waitress Repellent effect is over!");
-                }, 30000); // 30 seconds effect
+                mpc += 5;
                 updateUI();
-            } else {
-                alert("Not enough mung beans!");
             }
         });
 
-        document.getElementById("harvestDroneUpgrade").addEventListener("click", () => {
+        document.getElementById("megaDrone").addEventListener("click", () => {
             if (mungBeans >= 5000) {
                 mungBeans -= 5000;
-                harvestDroneActive = true;
-                alert("Harvest Drone activated! Harvests 100 mung beans per second automatically.");
+                autoHarvesting = 50;
                 updateUI();
-            } else {
-                alert("Not enough mung beans!");
             }
         });
 
-        document.getElementById("prestigeUpgrade").addEventListener("click", () => {
-            if (mungBeans >= 10000) {
-                mungBeans = 0;
-                prestigeCount++;
-                alert("Prestige activated! You’ve reset your progress, but get a permanent 2x bonus to mung beans.");
-                harvestingSpeed *= 2;
+        document.getElementById("premiumAutoHarvest").addEventListener("click", () => {
+            if (mungBeans >= 20000) {
+                mungBeans -= 20000;
+                autoHarvesting = 100;
                 updateUI();
-            } else {
-                alert("Not enough mung beans for prestige!");
+            }
+        });
+
+        document.getElementById("waitressRepellent").addEventListener("click", () => {
+            if (mungBeans >= 5000) {
+                mungBeans -= 5000;
+                setTimeout(() => {}, 30000);
+                updateUI();
+            }
+        });
+
+        document.getElementById("superFertilizer").addEventListener("click", () => {
+            if (mungBeans >= 10000) {
+                mungBeans -= 10000;
+                mpc += 10;
+                updateUI();
+            }
+        });
+
+        document.getElementById("beanMultiplier").addEventListener("click", () => {
+            if (mungBeans >= 25000) {
+                mungBeans -= 25000;
+                mpc *= 2;
+                updateUI();
+            }
+        });
+
+        document.getElementById("fastFarming").addEventListener("click", () => {
+            if (mungBeans >= 50000) {
+                mungBeans -= 50000;
+                mps *= 2;
+                updateUI();
             }
         });
 
@@ -298,8 +307,12 @@
         }, 1000);
 
         setInterval(() => {
-            harvestMungBeans(1);
+            if (autoHarvesting) {
+                harvestMungBeans(autoHarvesting);
+            }
         }, 1000);
+
+        updateUI();
     </script>
 </body>
 </html>
