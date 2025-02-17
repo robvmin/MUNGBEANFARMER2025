@@ -1,276 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MUNG BEAN FARMER 2025: SUPERIOR EDITION</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background-color: #f0f0f0;
-      color: #333;
-    }
-    .game-container {
-      margin-top: 50px;
-    }
-    .button {
-      padding: 10px 20px;
-      font-size: 18px;
-      cursor: pointer;
-      margin: 10px;
-      border: 2px solid #4CAF50;
-      border-radius: 5px;
-      background-color: #4CAF50;
-      color: white;
-    }
-    .button:hover {
-      background-color: #45a049;
-    }
-    .upgrade {
-      margin-top: 20px;
-    }
-    .ascii-art {
-      font-family: monospace;
-      white-space: pre;
-      margin-bottom: 20px;
-      font-size: 20px;
-    }
-    .upgrade-message {
-      font-size: 18px;
-      color: #4CAF50;
-      margin-top: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mung Bean Farmer 2025: Superior Edition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #mungBeansCount {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            margin: 5px;
+            width: 90%;
+            max-width: 300px;
+            box-sizing: border-box;
+        }
+        .upgrade {
+            margin-top: 10px;
+        }
+        .upgrade-info {
+            font-size: 14px;
+            color: #777;
+        }
+        .waitress-alert {
+            font-size: 16px;
+            color: red;
+            margin-top: 20px;
+        }
+        .stats {
+            margin-top: 20px;
+            font-size: 16px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .stats p {
+            margin: 5px 10px;
+            flex: 1 0 45%;
+            text-align: left;
+        }
+        .stats span {
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+            #mungBeansCount {
+                font-size: 18px;
+            }
+            button {
+                font-size: 14px;
+            }
+            .stats p {
+                font-size: 14px;
+                flex: 1 0 45%;
+            }
+        }
+    </style>
 </head>
 <body>
+    <h1>Mung Bean Farmer 2025: Superior Edition</h1>
+    <div id="mungBeansCount">Mung Beans: 0</div>
+    <button id="harvestButton">Click to Harvest Mung Beans</button>
 
-<h1>MUNG BEAN FARMER 2025: SUPERIOR EDITION</h1>
-<div class="ascii-art">
-  <pre>
-                    _.---._
-                 .'       `._
-                /     .--.    `.
-               /    /    |     \\
-              |    /     |      |
-              |   |      |      |
-              |   |  __  |      |
-          ___  |   |/  \ |  ___ |
-         /   \ `|   /    \| /   \|
-        |     |  |   |    |     |
-        |     |   |  |    |     |
-         \     \   |  |    |    /
-          \     \   |  |   |   /
-           `._   `\ |  |  |  /  
-              `---._\\|  |/.-'
-                     `"""`
-          MUNG! MUNG! MUNG! MUNG!
-  </pre>
-</div>
+    <div id="upgrades">
+        <div class="upgrade">
+            <button id="autoHarvestUpgrade">Auto-Harvest Upgrade: $100</button>
+            <div class="upgrade-info">Automatically harvest 10% of your mung beans every second.</div>
+        </div>
+        <div class="upgrade">
+            <button id="speedBoostUpgrade">Speed Boost: $500</button>
+            <div class="upgrade-info">Doubles your harvesting speed.</div>
+        </div>
+        <div class="upgrade">
+            <button id="fertilizerUpgrade">Fertilizer: $150</button>
+            <div class="upgrade-info">Increases mung bean yield by 50% per click.</div>
+        </div>
+        <div class="upgrade">
+            <button id="waitressRepellentUpgrade">Waitress Repellent: $1000</button>
+            <div class="upgrade-info">Prevents waitresses from appearing for 30 seconds.</div>
+        </div>
+        <div class="upgrade">
+            <button id="harvestDroneUpgrade">Harvest Drone: $5000</button>
+            <div class="upgrade-info">Automates mung bean harvesting. Harvest 100 beans per second.</div>
+        </div>
+        <div class="upgrade">
+            <button id="prestigeUpgrade">Prestige: $10,000</button>
+            <div class="upgrade-info">Resets your game but gives you a permanent 2x bonus to mung beans.</div>
+        </div>
+    </div>
 
-<div class="game-container">
-  <h2>You have <span id="beanCount">0</span> mung beans!</h2>
-  <button id="clickerButton" class="button">Click to harvest mung beans!</button>
+    <div id="waitressEffect" class="waitress-alert" style="display:none;"></div>
 
-  <div class="upgrade">
-    <h3>Upgrades:</h3>
-    <button id="upgrade1" class="button">Hire a Worker (Cost: 50 beans)</button>
-    <button id="upgrade2" class="button">Buy a Greenhouse (Cost: 200 beans)</button>
-    <button id="upgrade3" class="button">Mung Bean Irrigation System (Cost: 1000 beans)</button>
-    <button id="upgrade4" class="button">Automatic Bean Harvester (Cost: 5000 beans)</button>
-    <button id="upgrade5" class="button">Advanced Fertilizer (Cost: 10000 beans)</button>
-    <button id="upgrade6" class="button">Mung Bean Cultivation Expert (Cost: 25000 beans)</button>
-    <button id="upgrade7" class="button">Solar Powered Bean Harvester (Cost: 15000 beans)</button>
-    <button id="upgrade8" class="button">Mung Bean Drone Army (Cost: 30000 beans)</button>
-    <button id="upgrade9" class="button">Bean Growth Accelerator (Cost: 50000 beans)</button>
-    <button id="upgrade10" class="button">Farming Robot (Cost: 75000 beans)</button>
-    <button id="upgrade11" class="button">Genetically Modified Beans (Cost: 100000 beans)</button>
-    <button id="upgrade12" class="button">Mega Greenhouse (Cost: 200000 beans)</button>
-  </div>
+    <div id="stats" class="stats">
+        <p>Total Mung Beans Harvested: <span id="totalHarvested">0</span></p>
+        <p>Waitresses Defeated: <span id="totalWaitressesDefeated">0</span></p>
+        <p>Prestige Resets: <span id="prestigeResets">0</span></p>
+        <p>Mungs Per Second (MPS): <span id="mps">0</span></p>
+        <p>Mung Beans Per Click (MPC): <span id="mpc">1</span></p>
+    </div>
 
-  <div id="upgradeMessage" class="upgrade-message"></div>
-</div>
+    <script>
+        let mungBeans = 0;
+        let harvestingSpeed = 1;
+        let autoHarvesting = false;
+        let gameMoney = 0;
+        let fertilizer = 1;
+        let waitresses = [];
+        let harvestDroneActive = false;
+        let totalMungBeansHarvested = 0;
+        let totalWaitressesDefeated = 0;
+        let prestigeCount = 0;
+        let mps = 0;
+        let mpc = 1;
 
-<script>
-  let mungBeans = 0;
-  let workerMultiplier = 0;
-  let greenhouseMultiplier = 0;
-  let irrigationMultiplier = 0;
-  let harvesterMultiplier = 0;
-  let fertilizerMultiplier = 0;
-  let expertMultiplier = 0;
+        const waitressTypes = [
+            { name: "Slow Waitress", effect: "slow", duration: 5000 },
+            { name: "Stealer Waitress", effect: "steal", duration: 5000 },
+            { name: "Sabotage Waitress", effect: "sabotage", duration: 5000 },
+            { name: "Distraction Waitress", effect: "distraction", duration: 3000 }
+        ];
 
-  let autoHarvesters = 0;
-  let autoHarvestAmount = 0;
+        function updateUI() {
+            document.getElementById("mungBeansCount").textContent = `Mung Beans: ${mungBeans}`;
+            document.getElementById("totalHarvested").textContent = totalMungBeansHarvested;
+            document.getElementById("totalWaitressesDefeated").textContent = totalWaitressesDefeated;
+            document.getElementById("prestigeResets").textContent = prestigeCount;
+            document.getElementById("mps").textContent = mps.toFixed(1);
+            document.getElementById("mpc").textContent = mpc;
+        }
 
-  const beanCountElement = document.getElementById('beanCount');
-  const clickerButton = document.getElementById('clickerButton');
-  const upgrade1Button = document.getElementById('upgrade1');
-  const upgrade2Button = document.getElementById('upgrade2');
-  const upgrade3Button = document.getElementById('upgrade3');
-  const upgrade4Button = document.getElementById('upgrade4');
-  const upgrade5Button = document.getElementById('upgrade5');
-  const upgrade6Button = document.getElementById('upgrade6');
-  const upgrade7Button = document.getElementById('upgrade7');
-  const upgrade8Button = document.getElementById('upgrade8');
-  const upgrade9Button = document.getElementById('upgrade9');
-  const upgrade10Button = document.getElementById('upgrade10');
-  const upgrade11Button = document.getElementById('upgrade11');
-  const upgrade12Button = document.getElementById('upgrade12');
-  const upgradeMessage = document.getElementById('upgradeMessage');
+        function harvestMungBeans(amount) {
+            mungBeans += amount * harvestingSpeed * fertilizer;
+            totalMungBeansHarvested += amount * harvestingSpeed * fertilizer;
+            if (autoHarvesting) {
+                mungBeans += amount * 0.1;
+            }
+            if (harvestDroneActive) {
+                mungBeans += 100;  // Harvest drone adds 100 beans per second
+            }
+            updateUI();
+        }
 
-  // Function to update the mung bean count
-  function updateBeanCount() {
-    beanCountElement.textContent = mungBeans;
-  }
+        function createWaitress() {
+            const randomIndex = Math.floor(Math.random() * waitressTypes.length);
+            const waitress = waitressTypes[randomIndex];
+            waitress.appearanceTime = Date.now();
+            waitresses.push(waitress);
+            totalWaitressesDefeated++;
+            activateWaitressEffect(waitress);
+        }
 
-  // Automatically harvest beans over time (every second)
-  setInterval(function() {
-    mungBeans += autoHarvestAmount;
-    updateBeanCount();
-  }, 1000);
+        function activateWaitressEffect(waitress) {
+            if (waitress.effect === "slow") {
+                harvestingSpeed = 0.5;
+                showWaitressEffect("Slow Waitress has slowed down your harvest speed!");
+                setTimeout(() => {
+                    harvestingSpeed = 1;
+                    showWaitressEffect("Slow Waitress effect is over!");
+                }, waitress.duration);
+            } else if (waitress.effect === "steal") {
+                const stolenBeans = Math.floor(mungBeans * 0.1);
+                mungBeans -= stolenBeans;
+                showWaitressEffect(`Stealer Waitress stole ${stolenBeans} mung beans!`);
+                setTimeout(() => {
+                    showWaitressEffect("Stealer Waitress effect is over!");
+                }, waitress.duration);
+            } else if (waitress.effect === "sabotage") {
+                autoHarvesting = false;
+                showWaitressEffect("Sabotage Waitress disabled auto-harvest!");
+                setTimeout(() => {
+                    autoHarvesting = true;
+                    showWaitressEffect("Sabotage Waitress effect is over! Auto-harvest is restored.");
+                }, waitress.duration);
+            } else if (waitress.effect === "distraction") {
+                showWaitressEffect("Distraction Waitress is flashing on the screen!");
+                setTimeout(() => {
+                    showWaitressEffect("Distraction Waitress effect is over!");
+                }, waitress.duration);
+            }
+        }
 
-  // Button to manually harvest beans
-  clickerButton.addEventListener('click', function() {
-    mungBeans += 1 + workerMultiplier + greenhouseMultiplier + irrigationMultiplier + harvesterMultiplier + fertilizerMultiplier + expertMultiplier;
-    updateBeanCount();
-  });
+        function showWaitressEffect(message) {
+            const alertElement = document.getElementById("waitressEffect");
+            alertElement.style.display = "block";
+            alertElement.textContent = message;
+            setTimeout(() => {
+                alertElement.style.display = "none";
+            }, 3000);
+        }
 
-  // Upgrade buttons
-  upgrade1Button.addEventListener('click', function() {
-    if (mungBeans >= 50) {
-      mungBeans -= 50;
-      workerMultiplier += 1;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You hired a worker! They will help you farm more beans.';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans to hire a worker!';
-    }
-  });
+        function checkForWaitresses() {
+            if (Math.random() < 0.1) {
+                createWaitress();
+            }
+        }
 
-  upgrade2Button.addEventListener('click', function() {
-    if (mungBeans >= 200) {
-      mungBeans -= 200;
-      greenhouseMultiplier += 3;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You bought a greenhouse! It boosts your production rate.';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans to buy a greenhouse!';
-    }
-  });
+        document.getElementById("harvestButton").addEventListener("click", () => {
+            harvestMungBeans(1);
+        });
 
-  upgrade3Button.addEventListener('click', function() {
-    if (mungBeans >= 1000) {
-      mungBeans -= 1000;
-      irrigationMultiplier += 5;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You installed an irrigation system! It increases bean yield.';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans for an irrigation system!';
-    }
-  });
+        document.getElementById("autoHarvestUpgrade").addEventListener("click", () => {
+            if (mungBeans >= 100) {
+                mungBeans -= 100;
+                autoHarvesting = true;
+                alert("Auto-Harvest upgrade purchased!");
+                updateUI();
+            } else {
+                alert("Not enough mung beans!");
+            }
+        });
 
-  upgrade4Button.addEventListener('click', function() {
-    if (mungBeans >= 5000) {
-      mungBeans -= 5000;
-      autoHarvestAmount += 10;
-      autoHarvesters += 1;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You bought an automatic bean harvester! It automatically generates beans over time.';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans to buy an automatic harvester!';
-    }
-  });
+        document.getElementById("speedBoostUpgrade").addEventListener("click", () => {
+            if (mungBeans >= 500) {
+                mungBeans -= 500;
+                harvestingSpeed *= 2;
+                alert("Speed Boost upgrade purchased!");
+                updateUI();
+            } else {
+                alert("Not enough mung beans!");
+            }
+        });
 
-  upgrade5Button.addEventListener('click', function() {
-    if (mungBeans >= 10000) {
-      mungBeans -= 10000;
-      fertilizerMultiplier += 15;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You bought advanced fertilizer! Your mung bean crops grow faster.';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans for advanced fertilizer!';
-    }
-  });
+        document.getElementById("fertilizerUpgrade").addEventListener("click", () => {
+            if (mungBeans >= 150) {
+                mungBeans -= 150;
+                fertilizer = 1.5;
+                alert("Fertilizer upgrade purchased!");
+                updateUI();
+            } else {
+                alert("Not enough mung beans!");
+            }
+        });
 
-  upgrade6Button.addEventListener('click', function() {
-    if (mungBeans >= 25000) {
-      mungBeans -= 25000;
-      expertMultiplier += 25;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You hired a Mung Bean Cultivation Expert! They help you optimize your farm.';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans for an expert!';
-    }
-  });
+        document.getElementById("waitressRepellentUpgrade").addEventListener("click", () => {
+            if (mungBeans >= 1000) {
+                mungBeans -= 1000;
+                alert("Waitress Repellent activated! Waitresses will not appear for 30 seconds.");
+                setTimeout(() => {
+                    alert("Waitress Repellent effect is over!");
+                }, 30000); // 30 seconds effect
+                updateUI();
+            } else {
+                alert("Not enough mung beans!");
+            }
+        });
 
-  upgrade7Button.addEventListener('click', function() {
-    if (mungBeans >= 15000) {
-      mungBeans -= 15000;
-      autoHarvestAmount += 25;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You added solar panels to your farm! Your harvesters are now more efficient.';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans for solar panels!';
-    }
-  });
+        document.getElementById("harvestDroneUpgrade").addEventListener("click", () => {
+            if (mungBeans >= 5000) {
+                mungBeans -= 5000;
+                harvestDroneActive = true;
+                alert("Harvest Drone activated! Harvests 100 mung beans per second automatically.");
+                updateUI();
+            } else {
+                alert("Not enough mung beans!");
+            }
+        });
 
-  upgrade8Button.addEventListener('click', function() {
-    if (mungBeans >= 30000) {
-      mungBeans -= 30000;
-      autoHarvestAmount += 50;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You deployed a mung bean drone army! They harvest beans quickly.';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans for the drone army!';
-    }
-  });
+        document.getElementById("prestigeUpgrade").addEventListener("click", () => {
+            if (mungBeans >= 10000) {
+                mungBeans = 0;
+                prestigeCount++;
+                alert("Prestige activated! You’ve reset your progress, but get a permanent 2x bonus to mung beans.");
+                harvestingSpeed *= 2;
+                updateUI();
+            } else {
+                alert("Not enough mung beans for prestige!");
+            }
+        });
 
-  upgrade9Button.addEventListener('click', function() {
-    if (mungBeans >= 50000) {
-      mungBeans -= 50000;
-      autoHarvestAmount += 100;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You activated a bean growth accelerator! It boosts your automatic harvesters significantly.';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans for a growth accelerator!';
-    }
-  });
+        setInterval(() => {
+            checkForWaitresses();
+        }, 1000);
 
-  upgrade10Button.addEventListener('click', function() {
-    if (mungBeans >= 75000) {
-      mungBeans -= 75000;
-      autoHarvestAmount += 200;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You bought a farming robot! It harvests large amounts of mung beans automatically.';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans for a farming robot!';
-    }
-  });
-
-  upgrade11Button.addEventListener('click', function() {
-    if (mungBeans >= 100000) {
-      mungBeans -= 100000;
-      autoHarvestAmount += 500;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You genetically modified your beans! They grow faster and produce more!';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans for genetic modification!';
-    }
-  });
-
-  upgrade12Button.addEventListener('click', function() {
-    if (mungBeans >= 200000) {
-      mungBeans -= 200000;
-      autoHarvestAmount += 1000;
-      updateBeanCount();
-      upgradeMessage.textContent = 'You built a Mega Greenhouse! It massively boosts your automatic harvesters.';
-    } else {
-      upgradeMessage.textContent = 'You do not have enough beans for a Mega Greenhouse!';
-    }
-  });
-
-</script>
-
+        setInterval(() => {
+            harvestMungBeans(1);
+        }, 1000);
+    </script>
 </body>
 </html>
