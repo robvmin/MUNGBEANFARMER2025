@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.4</title>
+    <title>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.5</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -95,7 +95,7 @@
     </style>
 </head>
 <body>
-    <h1>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.4</h1>
+    <h1>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.5</h1>
     <div id="mungBeansCount">Mung Beans: 0</div>
     <button id="harvestButton">Click to Harvest Mung Beans</button>
 
@@ -187,45 +187,26 @@
         let prestigeCount = 0;
         let totalUpgradesPurchased = 0;
         let autoHarvesting = 0;
-        let fertilizer = 1;
         let prestigeModifier = 1;
 
-        // Load saved data
-        if(localStorage.getItem("mungBeansData")) {
-            let savedData = JSON.parse(localStorage.getItem("mungBeansData"));
-            mungBeans = savedData.mungBeans || 0;
-            mps = savedData.mps || 0;
-            mpc = savedData.mpc || 1;
-            totalMungBeansHarvested = savedData.totalMungBeansHarvested || 0;
-            totalWaitressesDefeated = savedData.totalWaitressesDefeated || 0;
-            prestigeCount = savedData.prestigeCount || 0;
-            totalUpgradesPurchased = savedData.totalUpgradesPurchased || 0;
-            autoHarvesting = savedData.autoHarvesting || 0;
-            fertilizer = savedData.fertilizer || 1;
-            prestigeModifier = savedData.prestigeModifier || 1;
-            updateUI();
-        }
-
-        // Upgrades with scaling and multipliers
         const upgrades = {
-            fertilizer: { cost: 50, effect: () => mpc += 1, level: 0, maxLevel: 10 },
-            autoHarvester: { cost: 500, effect: () => { autoHarvesting += 5; }, level: 0, maxLevel: 5 },
-            beanTanker: { cost: 1000, effect: () => mpc += 3, level: 0, maxLevel: 5 },
-            advancedFertilizer: { cost: 5000, effect: () => mpc += 5, level: 0, maxLevel: 5 },
-            mungBeanMachine: { cost: 10000, effect: () => { mps += 50; }, level: 0, maxLevel: 5 },
-            mungBeanShovel: { cost: 20000, effect: () => mpc += 10, level: 0, maxLevel: 5 },
-            mungBeanFactory: { cost: 50000, effect: () => { mps += 100; }, level: 0, maxLevel: 5 },
-            superFertilizer: { cost: 100000, effect: () => mpc += 15, level: 0, maxLevel: 5 },
-            mungBeanCloner: { cost: 200000, effect: () => { mps += 200; }, level: 0, maxLevel: 5 },
-            beanSpreader: { cost: 500000, effect: () => mpc += 25, level: 0, maxLevel: 5 },
-            mungBeanSatellite: { cost: 1000000, effect: () => { mps += 500; }, level: 0, maxLevel: 5 },
+            fertilizer: { cost: 50, effect: () => { mpc += 1; }, level: 0, maxLevel: 5 },
+            autoHarvest: { cost: 500, effect: () => { autoHarvesting += 5; }, level: 0, maxLevel: 5 },
+            beanTanker: { cost: 1000, effect: () => { mpc += 3; }, level: 0, maxLevel: 5 },
+            advancedFertilizer: { cost: 5000, effect: () => { mpc += 5; }, level: 0, maxLevel: 5 },
+            mungBeanMachine: { cost: 10000, effect: () => { autoHarvesting += 50; }, level: 0, maxLevel: 5 },
+            mungBeanShovel: { cost: 20000, effect: () => { mpc += 10; }, level: 0, maxLevel: 5 },
+            mungBeanFactory: { cost: 50000, effect: () => { autoHarvesting += 100; }, level: 0, maxLevel: 5 },
+            superFertilizer: { cost: 100000, effect: () => { mpc += 15; }, level: 0, maxLevel: 5 },
+            mungBeanCloner: { cost: 200000, effect: () => { autoHarvesting += 200; }, level: 0, maxLevel: 5 },
+            beanSpreader: { cost: 500000, effect: () => { mpc += 25; }, level: 0, maxLevel: 5 },
+            mungBeanSatellite: { cost: 1000000, effect: () => { autoHarvesting += 500; }, level: 0, maxLevel: 5 },
             multiplier: { cost: 5000000, effect: () => { mps *= 2; mpc *= 2; }, level: 0, maxLevel: 5 },
-            beanExtractor: { cost: 10000000, effect: () => mpc += 50, level: 0, maxLevel: 5 },
-            fungusColony: { cost: 50000000, effect: () => { mps += 1000; }, level: 0, maxLevel: 5 },
-            spiritualCultivation: { cost: 100000000, effect: () => mpc += 100, level: 0, maxLevel: 5 }
+            beanExtractor: { cost: 10000000, effect: () => { mpc += 50; }, level: 0, maxLevel: 5 },
+            fungusColony: { cost: 50000000, effect: () => { autoHarvesting += 1000; }, level: 0, maxLevel: 5 },
+            spiritualCultivation: { cost: 100000000, effect: () => { mpc += 100; }, level: 0, maxLevel: 5 }
         };
 
-        // Waitresses and their negative effects
         const waitressTypes = [
             { name: 'Angry Waitress', effect: 'Halves your Mung Beans per Click for 30 seconds.' },
             { name: 'Sneaky Waitress', effect: 'Steals 50 Mung Beans from you.' },
@@ -259,7 +240,6 @@
             localStorage.setItem("mungBeansData", JSON.stringify(gameData));
         }
 
-        // Harvest Mung Beans on button click
         document.getElementById("harvestButton").onclick = function() {
             mungBeans += mpc;
             totalMungBeansHarvested += mpc;
@@ -267,7 +247,6 @@
             saveProgress();
         };
 
-        // Add an automatic harvest system
         setInterval(function() {
             mungBeans += autoHarvesting;
             totalMungBeansHarvested += autoHarvesting;
@@ -275,7 +254,6 @@
             saveProgress();
         }, 1000);
 
-        // Waitresses random appearance and effect
         setInterval(function() {
             if (Math.random() < 0.1) {
                 let waitress = waitressTypes[Math.floor(Math.random() * waitressTypes.length)];
@@ -288,7 +266,6 @@
             }
         }, 10000);
 
-        // Upgrades purchase logic
         Object.keys(upgrades).forEach(upgradeKey => {
             let upgradeButton = document.getElementById(`${upgradeKey}Upgrade`);
             let upgrade = upgrades[upgradeKey];
@@ -305,7 +282,6 @@
             };
         });
 
-        // Prestige button logic
         document.getElementById("prestigeButton").onclick = function() {
             if (mungBeans >= 1000000) {
                 totalMungBeansHarvested = 0;
