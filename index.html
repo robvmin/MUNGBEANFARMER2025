@@ -9,32 +9,74 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             text-align: center;
+            margin: 0;
             padding: 20px;
         }
         h1 {
             color: #4CAF50;
-        }
-        #mungBeansCount {
             font-size: 24px;
             margin-bottom: 20px;
         }
+        #mungBeansCount {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
         button {
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-size: 16px;
             cursor: pointer;
             background-color: #4CAF50;
             color: white;
             border: none;
-            margin-bottom: 20px;
+            margin: 5px;
+            width: 90%;
+            max-width: 300px;
+            box-sizing: border-box;
         }
         .upgrade {
             margin-top: 10px;
-            font-size: 18px;
+        }
+        .upgrade-info {
+            font-size: 14px;
+            color: #777;
         }
         .waitress-alert {
-            font-size: 18px;
+            font-size: 16px;
             color: red;
             margin-top: 20px;
+        }
+        .stats {
+            margin-top: 20px;
+            font-size: 16px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .stats p {
+            margin: 5px 10px;
+            flex: 1 0 45%;
+            text-align: left;
+        }
+        .stats span {
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+            #mungBeansCount {
+                font-size: 18px;
+            }
+            button {
+                font-size: 14px;
+            }
+            .stats p {
+                font-size: 14px;
+                flex: 1 0 45%;
+            }
         }
     </style>
 </head>
@@ -46,27 +88,53 @@
     <div id="upgrades">
         <div class="upgrade">
             <button id="autoHarvestUpgrade">Auto-Harvest Upgrade: $100</button>
+            <div class="upgrade-info">Automatically harvest 10% of your mung beans every second.</div>
         </div>
         <div class="upgrade">
             <button id="speedBoostUpgrade">Speed Boost: $500</button>
+            <div class="upgrade-info">Doubles your harvesting speed.</div>
         </div>
         <div class="upgrade">
-            <button id="prestigeUpgrade">Prestige: Reset for Bonus</button>
+            <button id="fertilizerUpgrade">Fertilizer: $150</button>
+            <div class="upgrade-info">Increases mung bean yield by 50% per click.</div>
+        </div>
+        <div class="upgrade">
+            <button id="waitressRepellentUpgrade">Waitress Repellent: $1000</button>
+            <div class="upgrade-info">Prevents waitresses from appearing for 30 seconds.</div>
+        </div>
+        <div class="upgrade">
+            <button id="harvestDroneUpgrade">Harvest Drone: $5000</button>
+            <div class="upgrade-info">Automates mung bean harvesting. Harvest 100 beans per second.</div>
+        </div>
+        <div class="upgrade">
+            <button id="prestigeUpgrade">Prestige: $10,000</button>
+            <div class="upgrade-info">Resets your game but gives you a permanent 2x bonus to mung beans.</div>
         </div>
     </div>
 
     <div id="waitressEffect" class="waitress-alert" style="display:none;"></div>
+
+    <div id="stats" class="stats">
+        <p>Total Mung Beans Harvested: <span id="totalHarvested">0</span></p>
+        <p>Waitresses Defeated: <span id="totalWaitressesDefeated">0</span></p>
+        <p>Prestige Resets: <span id="prestigeResets">0</span></p>
+        <p>Mungs Per Second (MPS): <span id="mps">0</span></p>
+        <p>Mung Beans Per Click (MPC): <span id="mpc">1</span></p>
+    </div>
 
     <script>
         let mungBeans = 0;
         let harvestingSpeed = 1;
         let autoHarvesting = false;
         let gameMoney = 0;
-        let upgrades = {
-            autoHarvest: 0,
-            speedBoost: 0
-        };
+        let fertilizer = 1;
         let waitresses = [];
+        let harvestDroneActive = false;
+        let totalMungBeansHarvested = 0;
+        let totalWaitressesDefeated = 0;
+        let prestigeCount = 0;
+        let mps = 0;
+        let mpc = 1;
 
         const waitressTypes = [
             { name: "Slow Waitress", effect: "slow", duration: 5000 },
@@ -77,12 +145,21 @@
 
         function updateUI() {
             document.getElementById("mungBeansCount").textContent = `Mung Beans: ${mungBeans}`;
+            document.getElementById("totalHarvested").textContent = totalMungBeansHarvested;
+            document.getElementById("totalWaitressesDefeated").textContent = totalWaitressesDefeated;
+            document.getElementById("prestigeResets").textContent = prestigeCount;
+            document.getElementById("mps").textContent = mps.toFixed(1);
+            document.getElementById("mpc").textContent = mpc;
         }
 
         function harvestMungBeans(amount) {
-            mungBeans += amount * harvestingSpeed;
+            mungBeans += amount * harvestingSpeed * fertilizer;
+            totalMungBeansHarvested += amount * harvestingSpeed * fertilizer;
             if (autoHarvesting) {
                 mungBeans += amount * 0.1;
+            }
+            if (harvestDroneActive) {
+                mungBeans += 100;  // Harvest drone adds 100 beans per second
             }
             updateUI();
         }
@@ -92,6 +169,7 @@
             const waitress = waitressTypes[randomIndex];
             waitress.appearanceTime = Date.now();
             waitresses.push(waitress);
+            totalWaitressesDefeated++;
             activateWaitressEffect(waitress);
         }
 
@@ -166,10 +244,47 @@
             }
         });
 
-        document.getElementById("prestigeUpgrade").addEventListener("click", () => {
+        document.getElementById("fertilizerUpgrade").addEventListener("click", () => {
+            if (mungBeans >= 150) {
+                mungBeans -= 150;
+                fertilizer = 1.5;
+                alert("Fertilizer upgrade purchased!");
+                updateUI();
+            } else {
+                alert("Not enough mung beans!");
+            }
+        });
+
+        document.getElementById("waitressRepellentUpgrade").addEventListener("click", () => {
             if (mungBeans >= 1000) {
+                mungBeans -= 1000;
+                alert("Waitress Repellent activated! Waitresses will not appear for 30 seconds.");
+                setTimeout(() => {
+                    alert("Waitress Repellent effect is over!");
+                }, 30000); // 30 seconds effect
+                updateUI();
+            } else {
+                alert("Not enough mung beans!");
+            }
+        });
+
+        document.getElementById("harvestDroneUpgrade").addEventListener("click", () => {
+            if (mungBeans >= 5000) {
+                mungBeans -= 5000;
+                harvestDroneActive = true;
+                alert("Harvest Drone activated! Harvests 100 mung beans per second automatically.");
+                updateUI();
+            } else {
+                alert("Not enough mung beans!");
+            }
+        });
+
+        document.getElementById("prestigeUpgrade").addEventListener("click", () => {
+            if (mungBeans >= 10000) {
                 mungBeans = 0;
-                alert("Prestige activated! You’ve reset your progress, but get a bonus for the future.");
+                prestigeCount++;
+                alert("Prestige activated! You’ve reset your progress, but get a permanent 2x bonus to mung beans.");
+                harvestingSpeed *= 2;
                 updateUI();
             } else {
                 alert("Not enough mung beans for prestige!");
