@@ -146,6 +146,8 @@
         <p>Upgrades Purchased: <span id="upgradesPurchased">0</span></p>
     </div>
 
+    <button id="prestigeButton" style="margin-top: 20px;">Prestige</button>
+
     <script>
         let mungBeans = 0;
         let mps = 0;
@@ -156,6 +158,21 @@
         let totalUpgradesPurchased = 0;
         let autoHarvesting = 0;
         let fertilizer = 1;
+
+        // Load saved data
+        if(localStorage.getItem("mungBeansData")) {
+            let savedData = JSON.parse(localStorage.getItem("mungBeansData"));
+            mungBeans = savedData.mungBeans || 0;
+            mps = savedData.mps || 0;
+            mpc = savedData.mpc || 1;
+            totalMungBeansHarvested = savedData.totalMungBeansHarvested || 0;
+            totalWaitressesDefeated = savedData.totalWaitressesDefeated || 0;
+            prestigeCount = savedData.prestigeCount || 0;
+            totalUpgradesPurchased = savedData.totalUpgradesPurchased || 0;
+            autoHarvesting = savedData.autoHarvesting || 0;
+            fertilizer = savedData.fertilizer || 1;
+            updateUI();
+        }
 
         // Upgrades with scaling and multipliers
         const upgrades = {
@@ -171,11 +188,29 @@
             megaHarvestingMachine: { cost: 10000000, effect: () => mps += 1000, level: 0, maxLevel: 1 }
         };
 
+        // Prestige logic
+        function prestige() {
+            if (mungBeans >= 100000000) {
+                prestigeCount++;
+                let bonus = Math.floor(mungBeans / 1000000);
+                mpc = 1 + bonus;
+                mps = 0;
+                mungBeans = 0;
+                totalMungBeansHarvested = 0;
+                autoHarvesting = 0;
+                totalUpgradesPurchased = 0;
+                updateUI();
+                saveProgress();
+                document.getElementById("prestigeResets").textContent = prestigeCount;
+            }
+        }
+
         // Harvesting function
         function harvestMungBeans(amount) {
             mungBeans += amount * mpc;
             totalMungBeansHarvested += amount * mpc;
             updateUI();
+            saveProgress();
         }
 
         // Update the game stats on the UI
@@ -185,17 +220,19 @@
             document.getElementById("mps").textContent = mps;
             document.getElementById("mpc").textContent = mpc;
             document.getElementById("upgradesPurchased").textContent = totalUpgradesPurchased;
+            document.getElementById("prestigeResets").textContent = prestigeCount;
         }
 
         // Upgrade handling
         function handleUpgrade(upgrade) {
-            if (mungBeans >= upgrade.cost) {
+            if (mungBeans >= upgrade.cost && upgrade.level < upgrade.maxLevel) {
                 mungBeans -= upgrade.cost;
                 upgrade.effect();
                 upgrade.level++;
                 totalUpgradesPurchased++;
                 upgrade.cost = Math.floor(upgrade.cost * 1.5); // Increase cost by 50% for next upgrade
                 updateUI();
+                saveProgress();
             }
         }
 
@@ -211,10 +248,25 @@
         document.getElementById("alienMungFarmers").addEventListener("click", () => handleUpgrade(upgrades.alienMungFarmers));
         document.getElementById("megaHarvestingMachine").addEventListener("click", () => handleUpgrade(upgrades.megaHarvestingMachine));
 
-        // Harvest button
-        document.getElementById("harvestButton").addEventListener("click", () => harvestMungBeans(1));
+        // Prestige button event
+        document.getElementById("prestigeButton").addEventListener("click", prestige);
 
-        // Periodic harvesting
+        // Save the game state to local storage
+        function saveProgress() {
+            localStorage.setItem("mungBeansData", JSON.stringify({
+                mungBeans: mungBeans,
+                mps: mps,
+                mpc: mpc,
+                totalMungBeansHarvested: totalMungBeansHarvested,
+                totalWaitressesDefeated: totalWaitressesDefeated,
+                prestigeCount: prestigeCount,
+                totalUpgradesPurchased: totalUpgradesPurchased,
+                autoHarvesting: autoHarvesting,
+                fertilizer: fertilizer
+            }));
+        }
+
+        // Auto harvesting every second
         setInterval(() => {
             if (autoHarvesting > 0) {
                 harvestMungBeans(autoHarvesting);
