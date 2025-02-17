@@ -211,13 +211,16 @@
             }
         }
 
-        // Harvesting function
+        // Harvest mung beans
         function harvestMungBeans(amount) {
-            mungBeans += amount * mpc;
-            totalMungBeansHarvested += amount * mpc;
+            mungBeans += amount;
+            totalMungBeansHarvested += amount;
             updateUI();
             saveProgress();
         }
+
+        // Event listener for click to harvest
+        document.getElementById("harvestButton").addEventListener("click", () => harvestMungBeans(mpc));
 
         // Update UI elements
         function updateUI() {
@@ -228,10 +231,6 @@
             document.getElementById("totalWaitressesDefeated").textContent = totalWaitressesDefeated;
             document.getElementById("upgradesPurchased").textContent = totalUpgradesPurchased;
             document.getElementById("prestigeResets").textContent = prestigeCount;
-
-            // Update version number
-            let version = 1.0 + (prestigeCount * 0.1); 
-            document.title = `Mung Bean Farming Simulator 2025: Superior Edition - Version ${version.toFixed(1)}`;
         }
 
         // Event listeners for upgrades
