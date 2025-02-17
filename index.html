@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.2</title>
+    <title>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.4</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -95,7 +95,7 @@
     </style>
 </head>
 <body>
-    <h1>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.2</h1>
+    <h1>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.4</h1>
     <div id="mungBeansCount">Mung Beans: 0</div>
     <button id="harvestButton">Click to Harvest Mung Beans</button>
 
@@ -109,7 +109,58 @@
             <button id="autoHarvestUpgrade">Buy Auto-Harvester (Cost: 500 Mung Beans)</button>
             <div class="upgrade-info">Harvests 5 Mung Beans per second automatically.</div>
         </div>
-        <!-- More upgrades here -->
+        <div class="upgrade">
+            <button id="beanTankerUpgrade">Buy Bean Tanker (Cost: 1000 Mung Beans)</button>
+            <div class="upgrade-info">Increases Mung Beans per Click by 3.</div>
+        </div>
+        <div class="upgrade">
+            <button id="advancedFertilizerUpgrade">Buy Advanced Fertilizer (Cost: 5000 Mung Beans)</button>
+            <div class="upgrade-info">Increases Mung Beans per Click by 5.</div>
+        </div>
+        <div class="upgrade">
+            <button id="mungBeanMachineUpgrade">Buy Mung Bean Machine (Cost: 10000 Mung Beans)</button>
+            <div class="upgrade-info">Generates Mung Beans at a rate of 50 Mung Beans per second.</div>
+        </div>
+        <div class="upgrade">
+            <button id="mungBeanShovelUpgrade">Buy Mung Bean Shovel (Cost: 20000 Mung Beans)</button>
+            <div class="upgrade-info">Increases Mung Beans per Click by 10.</div>
+        </div>
+        <div class="upgrade">
+            <button id="mungBeanFactoryUpgrade">Buy Mung Bean Factory (Cost: 50000 Mung Beans)</button>
+            <div class="upgrade-info">Generates Mung Beans at a rate of 100 Mung Beans per second.</div>
+        </div>
+        <div class="upgrade">
+            <button id="superFertilizerUpgrade">Buy Super Fertilizer (Cost: 100000 Mung Beans)</button>
+            <div class="upgrade-info">Increases Mung Beans per Click by 15.</div>
+        </div>
+        <div class="upgrade">
+            <button id="mungBeanCloningUpgrade">Buy Mung Bean Cloner (Cost: 200000 Mung Beans)</button>
+            <div class="upgrade-info">Generates Mung Beans at a rate of 200 Mung Beans per second.</div>
+        </div>
+        <div class="upgrade">
+            <button id="beanSpreaderUpgrade">Buy Bean Spreader (Cost: 500000 Mung Beans)</button>
+            <div class="upgrade-info">Increases Mung Beans per Click by 25.</div>
+        </div>
+        <div class="upgrade">
+            <button id="mungBeanSatelliteUpgrade">Buy Mung Bean Satellite (Cost: 1000000 Mung Beans)</button>
+            <div class="upgrade-info">Generates Mung Beans at a rate of 500 Mung Beans per second.</div>
+        </div>
+        <div class="upgrade">
+            <button id="multiplierUpgrade">Buy Multiplier (Cost: 5000000 Mung Beans)</button>
+            <div class="upgrade-info">Increases all Mung Beans generation rates by 2x.</div>
+        </div>
+        <div class="upgrade">
+            <button id="beanExtractorUpgrade">Buy Bean Extractor (Cost: 10000000 Mung Beans)</button>
+            <div class="upgrade-info">Increases Mung Beans per Click by 50.</div>
+        </div>
+        <div class="upgrade">
+            <button id="fungusUpgrade">Buy Fungus Colony (Cost: 50000000 Mung Beans)</button>
+            <div class="upgrade-info">Generates Mung Beans at a rate of 1000 Mung Beans per second.</div>
+        </div>
+        <div class="upgrade">
+            <button id="spiritualUpgrade">Buy Spiritual Cultivation (Cost: 100000000 Mung Beans)</button>
+            <div class="upgrade-info">Increases Mung Beans per Click by 100.</div>
+        </div>
     </div>
 
     <div class="stats">
@@ -159,8 +210,27 @@
         const upgrades = {
             fertilizer: { cost: 50, effect: () => mpc += 1, level: 0, maxLevel: 10 },
             autoHarvester: { cost: 500, effect: () => { autoHarvesting += 5; }, level: 0, maxLevel: 5 },
-            // Other upgrades here
+            beanTanker: { cost: 1000, effect: () => mpc += 3, level: 0, maxLevel: 5 },
+            advancedFertilizer: { cost: 5000, effect: () => mpc += 5, level: 0, maxLevel: 5 },
+            mungBeanMachine: { cost: 10000, effect: () => { mps += 50; }, level: 0, maxLevel: 5 },
+            mungBeanShovel: { cost: 20000, effect: () => mpc += 10, level: 0, maxLevel: 5 },
+            mungBeanFactory: { cost: 50000, effect: () => { mps += 100; }, level: 0, maxLevel: 5 },
+            superFertilizer: { cost: 100000, effect: () => mpc += 15, level: 0, maxLevel: 5 },
+            mungBeanCloner: { cost: 200000, effect: () => { mps += 200; }, level: 0, maxLevel: 5 },
+            beanSpreader: { cost: 500000, effect: () => mpc += 25, level: 0, maxLevel: 5 },
+            mungBeanSatellite: { cost: 1000000, effect: () => { mps += 500; }, level: 0, maxLevel: 5 },
+            multiplier: { cost: 5000000, effect: () => { mps *= 2; mpc *= 2; }, level: 0, maxLevel: 5 },
+            beanExtractor: { cost: 10000000, effect: () => mpc += 50, level: 0, maxLevel: 5 },
+            fungusColony: { cost: 50000000, effect: () => { mps += 1000; }, level: 0, maxLevel: 5 },
+            spiritualCultivation: { cost: 100000000, effect: () => mpc += 100, level: 0, maxLevel: 5 }
         };
+
+        // Waitresses and their negative effects
+        const waitressTypes = [
+            { name: 'Angry Waitress', effect: 'Halves your Mung Beans per Click for 30 seconds.' },
+            { name: 'Sneaky Waitress', effect: 'Steals 50 Mung Beans from you.' },
+            { name: 'Sleepy Waitress', effect: 'Slows down your Mung Beans per second for 15 seconds.' }
+        ];
 
         function updateUI() {
             document.getElementById("mungBeansCount").innerText = `Mung Beans: ${mungBeans}`;
@@ -174,7 +244,7 @@
         }
 
         function saveProgress() {
-            const data = {
+            const gameData = {
                 mungBeans,
                 mps,
                 mpc,
@@ -186,54 +256,70 @@
                 fertilizer,
                 prestigeModifier
             };
-            localStorage.setItem("mungBeansData", JSON.stringify(data));
+            localStorage.setItem("mungBeansData", JSON.stringify(gameData));
         }
 
-        document.getElementById("harvestButton").addEventListener("click", function() {
+        // Harvest Mung Beans on button click
+        document.getElementById("harvestButton").onclick = function() {
             mungBeans += mpc;
             totalMungBeansHarvested += mpc;
             updateUI();
             saveProgress();
-        });
+        };
 
-        // Upgrade purchase handlers
-        document.getElementById("fertilizerUpgrade").addEventListener("click", function() {
-            if(mungBeans >= upgrades.fertilizer.cost && upgrades.fertilizer.level < upgrades.fertilizer.maxLevel) {
-                mungBeans -= upgrades.fertilizer.cost;
-                upgrades.fertilizer.level++;
-                upgrades.fertilizer.effect();
-                totalUpgradesPurchased++;
-                updateUI();
+        // Add an automatic harvest system
+        setInterval(function() {
+            mungBeans += autoHarvesting;
+            totalMungBeansHarvested += autoHarvesting;
+            updateUI();
+            saveProgress();
+        }, 1000);
+
+        // Waitresses random appearance and effect
+        setInterval(function() {
+            if (Math.random() < 0.1) {
+                let waitress = waitressTypes[Math.floor(Math.random() * waitressTypes.length)];
+                let effect = waitress.effect;
+                document.getElementById("waitressAlert").innerText = `A ${waitress.name} has appeared! Effect: ${effect}`;
+                document.getElementById("waitressAlert").classList.add("flash");
+                setTimeout(() => document.getElementById("waitressAlert").classList.remove("flash"), 500);
+                totalWaitressesDefeated++;
                 saveProgress();
             }
+        }, 10000);
+
+        // Upgrades purchase logic
+        Object.keys(upgrades).forEach(upgradeKey => {
+            let upgradeButton = document.getElementById(`${upgradeKey}Upgrade`);
+            let upgrade = upgrades[upgradeKey];
+
+            upgradeButton.onclick = function() {
+                if (mungBeans >= upgrade.cost && upgrade.level < upgrade.maxLevel) {
+                    mungBeans -= upgrade.cost;
+                    upgrade.effect();
+                    upgrade.level++;
+                    totalUpgradesPurchased++;
+                    saveProgress();
+                    updateUI();
+                }
+            };
         });
 
-        // Prestige system fix
-        document.getElementById("prestigeButton").addEventListener("click", function() {
-            if (totalMungBeansHarvested >= 1000000) {
-                prestigeModifier = 1 + Math.floor(totalMungBeansHarvested / 1000000);
+        // Prestige button logic
+        document.getElementById("prestigeButton").onclick = function() {
+            if (mungBeans >= 1000000) {
                 totalMungBeansHarvested = 0;
                 totalWaitressesDefeated = 0;
+                totalUpgradesPurchased = 0;
                 mungBeans = 0;
+                prestigeCount++;
+                prestigeModifier *= 1.5;
                 mps = 0;
                 mpc = 1;
-                totalUpgradesPurchased = 0;
-                prestigeCount++;
-                updateUI();
                 saveProgress();
+                updateUI();
             }
-        });
-
-        // Random Waitresses Appearance
-        setInterval(function() {
-            let randomChance = Math.random();
-            if (randomChance < 0.05) {
-                let effects = ["Reduce MPS", "Reduce MPC", "Increase Mung Beans per Upgrade Cost"];
-                let effect = effects[Math.floor(Math.random() * effects.length)];
-                document.getElementById("waitressAlert").innerText = "A waitress appears! Effect: " + effect;
-                // Add effect logic here based on the effect chosen
-            }
-        }, 5000); // Every 5 seconds
+        };
     </script>
 </body>
 </html>
