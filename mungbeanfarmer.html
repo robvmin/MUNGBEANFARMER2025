@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mung Bean Farming Simulator 2025: Superior Edition</title>
+    <title>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.0</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -95,7 +95,7 @@
     </style>
 </head>
 <body>
-    <h1>Mung Bean Farming Simulator 2025: Superior Edition</h1>
+    <h1>Mung Bean Farming Simulator 2025: Superior Edition - Version 1.0</h1>
     <div id="mungBeansCount">Mung Beans: 0</div>
     <button id="harvestButton">Click to Harvest Mung Beans</button>
 
@@ -219,15 +219,19 @@
             saveProgress();
         }
 
-        // Update the game stats on the UI
+        // Update UI elements
         function updateUI() {
-            document.getElementById("mungBeansCount").textContent = "Mung Beans: " + mungBeans;
+            document.getElementById("mungBeansCount").textContent = `Mung Beans: ${mungBeans}`;
             document.getElementById("totalHarvested").textContent = totalMungBeansHarvested;
             document.getElementById("mps").textContent = mps;
             document.getElementById("mpc").textContent = mpc;
             document.getElementById("totalWaitressesDefeated").textContent = totalWaitressesDefeated;
             document.getElementById("upgradesPurchased").textContent = totalUpgradesPurchased;
             document.getElementById("prestigeResets").textContent = prestigeCount;
+
+            // Update version number
+            let version = 1.0 + (prestigeCount * 0.1); 
+            document.title = `Mung Bean Farming Simulator 2025: Superior Edition - Version ${version.toFixed(1)}`;
         }
 
         // Event listeners for upgrades
