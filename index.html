@@ -89,7 +89,7 @@
     </style>
 </head>
 <body>
-    <h1>Mung Bean Farmer 2025: Superior Edition</h1>
+    <h1>Mung Bean Farming Simulator 2025: Superior Edition</h1>
     <div id="mungBeansCount">Mung Beans: 0</div>
     <button id="harvestButton">Click to Harvest Mung Beans</button>
 
@@ -97,7 +97,7 @@
         <!-- Upgrades Section -->
         <div class="upgrade">
             <button id="fertilizerUpgrade">Buy Fertilizer (Cost: 50 Mung Beans)</button>
-            <div class="upgrade-info">Increases Mung Beans per Click by 1.</div>
+            <div class="upgrade-info">Makes your beans grow faster. Boosts Mung Beans per Click by 1.</div>
         </div>
         <div class="upgrade">
             <button id="autoHarvestUpgrade">Buy Auto-Harvester (Cost: 500 Mung Beans)</button>
@@ -107,20 +107,64 @@
             <button id="speedBoost">Buy Speed Boost (Cost: 1000 Mung Beans)</button>
             <div class="upgrade-info">Increases Mung Beans per Click by 5.</div>
         </div>
-        
+        <div class="upgrade">
+            <button id="mungBeanSprinkler">Buy Mung Bean Sprinkler (Cost: 2500 Mung Beans)</button>
+            <div class="upgrade-info">A sprinkler that sprinkles beans all over your farm, boosting Mung Beans per second by 30.</div>
+        </div>
+        <div class="upgrade">
+            <button id="cosmicHarvester">Buy Cosmic Bean Harvester (Cost: 5000 Mung Beans)</button>
+            <div class="upgrade-info">Harvests 50 Mung Beans per second, plus some cosmic beans that defy physics!</div>
+        </div>
+        <div class="upgrade">
+            <button id="beanDanceParty">Buy Bean Dance Party (Cost: 15000 Mung Beans)</button>
+            <div class="upgrade-info">Mung Beans explode with joy! Increases Mung Beans per Click by 20 for a short time.</div>
+        </div>
+        <div class="upgrade">
+            <button id="mungFactory">Buy Mung Factory (Cost: 20000 Mung Beans)</button>
+            <div class="upgrade-info">Produces 100 Mung Beans per second automatically.</div>
+        </div>
+        <div class="upgrade">
+            <button id="mysticFertilizer">Buy Mystic Fertilizer (Cost: 50000 Mung Beans)</button>
+            <div class="upgrade-info">Magical fertilizer that boosts Mung Beans per Click by 50!</div>
+        </div>
+        <div class="upgrade">
+            <button id="alienMungFarmers">Buy Alien Mung Farmers (Cost: 200000 Mung Beans)</button>
+            <div class="upgrade-info">Extra-terrestrial beings help you farm beans faster. Increases Mung Beans per second by 200.</div>
+        </div>
+        <div class="upgrade">
+            <button id="beanJuiceMixer">Buy Bean Juice Mixer (Cost: 500000 Mung Beans)</button>
+            <div class="upgrade-info">Mixes your beans into a juice and serves them up! Increases Mung Beans per Click by 100.</div>
+        </div>
+
+        <!-- Prestige System -->
         <div class="upgrade">
             <button id="prestigeUpgrade">Prestige Reset</button>
             <div class="upgrade-info">Prestige and reset your progress for a Mung Beans per Click (MPC) multiplier boost.</div>
         </div>
+
+        <!-- More Upgrades -->
+        <div class="upgrade">
+            <button id="superMungFactory">Buy Super Mung Factory (Cost: 1000000 Mung Beans)</button>
+            <div class="upgrade-info">Produces 1000 Mung Beans per second automatically. It's SUPER!</div>
+        </div>
+        <div class="upgrade">
+            <button id="megaBeanShaker">Buy Mega Bean Shaker (Cost: 5000000 Mung Beans)</button>
+            <div class="upgrade-info">Shakes your beans like never before, increasing Mung Beans per second by 500.</div>
+        </div>
+        <div class="upgrade">
+            <button id="megaFertilizer">Buy Mega Fertilizer (Cost: 10000000 Mung Beans)</button>
+            <div class="upgrade-info">Increases Mung Beans per Click by 500. Beans grow faster than ever!</div>
+        </div>
     </div>
 
+    <!-- Waitress Alert -->
     <div id="waitressEffect" class="waitress-alert" style="display:none;"></div>
 
     <div id="stats" class="stats">
         <p>Total Mung Beans Harvested: <span id="totalHarvested">0</span></p>
         <p>Waitresses Defeated: <span id="totalWaitressesDefeated">0</span></p>
         <p>Prestige Resets: <span id="prestigeResets">0</span></p>
-        <p>Mungs Per Second (MPS): <span id="mps">0</span></p>
+        <p>Mung Beans Per Second (MPS): <span id="mps">0</span></p>
         <p>Mung Beans Per Click (MPC): <span id="mpc">1</span></p>
         <p>Upgrades Purchased: <span id="upgradesPurchased">0</span></p>
     </div>
@@ -137,38 +181,46 @@
         let harvestingSpeed = 1;
         let fertilizer = 1;
 
-        // Load saved progress from localStorage
-        function loadGameState() {
-            const savedState = JSON.parse(localStorage.getItem("mungBeanFarmerState"));
-            if (savedState) {
-                mungBeans = savedState.mungBeans;
-                mps = savedState.mps;
-                mpc = savedState.mpc;
-                totalMungBeansHarvested = savedState.totalMungBeansHarvested;
-                totalWaitressesDefeated = savedState.totalWaitressesDefeated;
-                prestigeCount = savedState.prestigeCount;
-                totalUpgradesPurchased = savedState.totalUpgradesPurchased;
-                autoHarvesting = savedState.autoHarvesting;
-                fertilizer = savedState.fertilizer;
-            }
+        // Upgrades
+        const upgrades = {
+            fertilizer: { cost: 50, effect: () => mpc += 1 },
+            autoHarvester: { cost: 500, effect: () => { autoHarvesting += 5; } },
+            speedBoost: { cost: 1000, effect: () => mpc += 5 },
+            mungBeanSprinkler: { cost: 2500, effect: () => mps += 30 },
+            cosmicHarvester: { cost: 5000, effect: () => mps += 50 },
+            beanDanceParty: { cost: 15000, effect: () => mpc += 20 },
+            mungFactory: { cost: 20000, effect: () => mps += 100 },
+            mysticFertilizer: { cost: 50000, effect: () => mpc += 50 },
+            alienMungFarmers: { cost: 200000, effect: () => mps += 200 },
+            beanJuiceMixer: { cost: 500000, effect: () => mpc += 100 },
+            superMungFactory: { cost: 1000000, effect: () => mps += 1000 },
+            megaBeanShaker: { cost: 5000000, effect: () => mps += 500 },
+            megaFertilizer: { cost: 10000000, effect: () => mpc += 500 }
+        };
+
+        // Harvesting function
+        function harvestMungBeans(amount) {
+            mungBeans += amount * harvestingSpeed * fertilizer;
+            totalMungBeansHarvested += amount * harvestingSpeed * fertilizer;
+            saveGameState();
+            updateUI();
         }
 
-        // Save the current game state to localStorage
-        function saveGameState() {
-            const gameState = {
-                mungBeans,
-                mps,
-                mpc,
-                totalMungBeansHarvested,
-                totalWaitressesDefeated,
-                prestigeCount,
-                totalUpgradesPurchased,
-                autoHarvesting,
-                fertilizer
-            };
-            localStorage.setItem("mungBeanFarmerState", JSON.stringify(gameState));
+        // Waitresses causing random negative effects
+        function spawnWaitress() {
+            const waitressEffects = [
+                "The Waitress took 100 Mung Beans from you!", 
+                "Waitress spilled your Mung Beans, losing 50!",
+                "A rude waitress cuts your MPS in half for 30 seconds!"
+            ];
+            const randomEffect = waitressEffects[Math.floor(Math.random() * waitressEffects.length)];
+            document.getElementById("waitressEffect").textContent = randomEffect;
+            document.getElementById("waitressEffect").style.display = 'block';
+            totalWaitressesDefeated++; // Track defeated waitresses
+            setTimeout(() => document.getElementById("waitressEffect").style.display = 'none', 3000);
         }
 
+        // Update the UI with current values
         function updateUI() {
             document.getElementById("mungBeansCount").textContent = `Mung Beans: ${mungBeans}`;
             document.getElementById("totalHarvested").textContent = totalMungBeansHarvested;
@@ -179,71 +231,56 @@
             document.getElementById("upgradesPurchased").textContent = totalUpgradesPurchased;
         }
 
-        // Harvesting function
-        function harvestMungBeans(amount) {
-            mungBeans += amount * harvestingSpeed * fertilizer;
-            totalMungBeansHarvested += amount * harvestingSpeed * fertilizer;
-            saveGameState(); // Save progress after each harvest
-            updateUI();
-        }
-
-        // Calculate Prestige bonus based on total mung beans and upgrades
-        function calculatePrestigeBonus() {
-            const upgradeBonus = totalUpgradesPurchased * 0.1; // 0.1 per upgrade purchased
-            const harvestBonus = Math.floor(totalMungBeansHarvested / 100000); // Bonus based on total harvested (1 bonus for every 100k harvested)
-            return (upgradeBonus + harvestBonus);
-        }
-
-        // Prestige reset functionality
-        function prestige() {
-            if (mungBeans >= 1000000) {
-                const prestigeBonus = calculatePrestigeBonus();
-                mpc *= (1 + prestigeBonus); // Apply prestige bonus to MPC
-                mps *= (1 + prestigeBonus); // Optionally, apply to MPS as well
-                prestigeCount++;
-                totalMungBeansHarvested = 0;
-                mungBeans = 0;
-                totalWaitressesDefeated = 0;
-                totalUpgradesPurchased = 0; // Optionally reset upgrades purchased
-                saveGameState(); // Save progress after prestige reset
+        // Handle upgrade purchases
+        function handleUpgrade(upgrade) {
+            if (mungBeans >= upgrade.cost) {
+                mungBeans -= upgrade.cost;
+                upgrade.effect();
+                totalUpgradesPurchased++;
+                saveGameState();
                 updateUI();
             }
         }
 
-        // Button listeners for upgrades
-        const upgrades = [
-            { id: "fertilizerUpgrade", cost: 50, effect: () => { fertilizer = 1.2; totalUpgradesPurchased++; saveGameState(); }, description: "Increases Mung Beans per Click by 1." },
-            { id: "autoHarvestUpgrade", cost: 500, effect: () => { autoHarvesting = 5; totalUpgradesPurchased++; saveGameState(); }, description: "Harvests 5 Mung Beans per second automatically." },
-            { id: "speedBoost", cost: 1000, effect: () => { mpc += 5; totalUpgradesPurchased++; saveGameState(); }, description: "Increases Mung Beans per Click by 5." },
-        ];
+        // Reset game and apply prestige bonus
+        function prestige() {
+            const bonus = totalUpgradesPurchased * 0.1 + Math.floor(totalMungBeansHarvested / 100000);
+            mpc += bonus;
+            mungBeans = 0;
+            prestigeCount++;
+            totalMungBeansHarvested = 0;
+            saveGameState();
+            updateUI();
+        }
 
-        upgrades.forEach(upgrade => {
-            const button = document.getElementById(upgrade.id);
-            button.addEventListener("click", () => {
-                if (mungBeans >= upgrade.cost) {
-                    mungBeans -= upgrade.cost;
-                    upgrade.effect();
-                    saveGameState(); // Save progress after upgrade purchase
-                    updateUI();
-                }
-            });
-        });
+        // Add event listeners for all the upgrades
+        document.getElementById("fertilizerUpgrade").addEventListener("click", () => handleUpgrade(upgrades.fertilizer));
+        document.getElementById("autoHarvestUpgrade").addEventListener("click", () => handleUpgrade(upgrades.autoHarvester));
+        document.getElementById("speedBoost").addEventListener("click", () => handleUpgrade(upgrades.speedBoost));
+        document.getElementById("mungBeanSprinkler").addEventListener("click", () => handleUpgrade(upgrades.mungBeanSprinkler));
+        document.getElementById("cosmicHarvester").addEventListener("click", () => handleUpgrade(upgrades.cosmicHarvester));
+        document.getElementById("beanDanceParty").addEventListener("click", () => handleUpgrade(upgrades.beanDanceParty));
+        document.getElementById("mungFactory").addEventListener("click", () => handleUpgrade(upgrades.mungFactory));
+        document.getElementById("mysticFertilizer").addEventListener("click", () => handleUpgrade(upgrades.mysticFertilizer));
+        document.getElementById("alienMungFarmers").addEventListener("click", () => handleUpgrade(upgrades.alienMungFarmers));
+        document.getElementById("beanJuiceMixer").addEventListener("click", () => handleUpgrade(upgrades.beanJuiceMixer));
+        document.getElementById("superMungFactory").addEventListener("click", () => handleUpgrade(upgrades.superMungFactory));
+        document.getElementById("megaBeanShaker").addEventListener("click", () => handleUpgrade(upgrades.megaBeanShaker));
+        document.getElementById("megaFertilizer").addEventListener("click", () => handleUpgrade(upgrades.megaFertilizer));
 
-        document.getElementById("harvestButton").addEventListener("click", () => {
-            harvestMungBeans(mpc);
-        });
+        // Prestige button
+        document.getElementById("prestigeUpgrade").addEventListener("click", prestige);
 
-        document.getElementById("prestigeUpgrade").addEventListener("click", () => {
-            prestige();
-        });
+        // Harvesting button
+        document.getElementById("harvestButton").addEventListener("click", () => harvestMungBeans(1));
 
-        // Start the game loop
+        // Periodic events
         setInterval(() => {
-            harvestMungBeans(autoHarvesting);
+            if (autoHarvesting > 0) {
+                harvestMungBeans(autoHarvesting);
+            }
+            spawnWaitress();
         }, 1000);
-
-        loadGameState(); // Load saved progress on page load
-        updateUI();
     </script>
 </body>
 </html>
