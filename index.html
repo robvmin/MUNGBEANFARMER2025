@@ -71,6 +71,11 @@
         .stats span {
             font-weight: bold;
         }
+        .prestige-info {
+            font-size: 14px;
+            color: #777;
+            margin-top: 10px;
+        }
         @media (max-width: 600px) {
             h1 {
                 font-size: 20px;
@@ -147,6 +152,7 @@
     </div>
 
     <button id="prestigeButton" style="margin-top: 20px;">Prestige</button>
+    <div class="prestige-info" id="prestigeInfo">Prestige to reset your game and gain bonus Mung Beans per Click based on your total harvested.</div>
 
     <script>
         let mungBeans = 0;
@@ -219,21 +225,9 @@
             document.getElementById("totalHarvested").textContent = totalMungBeansHarvested;
             document.getElementById("mps").textContent = mps;
             document.getElementById("mpc").textContent = mpc;
+            document.getElementById("totalWaitressesDefeated").textContent = totalWaitressesDefeated;
             document.getElementById("upgradesPurchased").textContent = totalUpgradesPurchased;
             document.getElementById("prestigeResets").textContent = prestigeCount;
-        }
-
-        // Upgrade handling
-        function handleUpgrade(upgrade) {
-            if (mungBeans >= upgrade.cost && upgrade.level < upgrade.maxLevel) {
-                mungBeans -= upgrade.cost;
-                upgrade.effect();
-                upgrade.level++;
-                totalUpgradesPurchased++;
-                upgrade.cost = Math.floor(upgrade.cost * 1.5); // Increase cost by 50% for next upgrade
-                updateUI();
-                saveProgress();
-            }
         }
 
         // Event listeners for upgrades
@@ -250,6 +244,18 @@
 
         // Prestige button event
         document.getElementById("prestigeButton").addEventListener("click", prestige);
+
+        // Handle upgrade purchases
+        function handleUpgrade(upgrade) {
+            if (mungBeans >= upgrade.cost && upgrade.level < upgrade.maxLevel) {
+                mungBeans -= upgrade.cost;
+                upgrade.level++;
+                upgrade.effect();
+                totalUpgradesPurchased++;
+                updateUI();
+                saveProgress();
+            }
+        }
 
         // Save the game state to local storage
         function saveProgress() {
@@ -272,6 +278,9 @@
                 harvestMungBeans(autoHarvesting);
             }
         }, 1000);
+
+        // Initial UI update
+        updateUI();
     </script>
 </body>
 </html>
